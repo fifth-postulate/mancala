@@ -19,6 +19,6 @@ This section will define the terms in the description of this project.
 
 > area of machine learning concerned with how software agents ought to take actions in an environment so as to maximize some notion of cumulative reward. The problem, due to its generality, is studied in many other disciplines, such as game theory, control theory, operations research, information theory, simulation-based optimization, multi-agent systems, swarm intelligence, statistics and genetic algorithms.
 
-[mancala] https://en.wikipedia.org/wiki/Mancala
+[mancala]: https://en.wikipedia.org/wiki/Mancala
 [rust]: https://www.rust-lang.org/
 [rl]: https://en.wikipedia.org/wiki/Reinforcement_learning
