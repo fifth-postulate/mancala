@@ -56,7 +56,7 @@ impl GameBuilder {
 /// A Game is created with a GameBuilder.
 pub struct Game {
     current: Position,
-    history: Vec<Position>,
+    history: Vec<usize>,
 }
 
 impl Game {
@@ -64,10 +64,16 @@ impl Game {
     pub fn finished(&self) -> bool {
         false
     }
+
+    /// Determine which bowls are playable.
+    pub fn options(&self) -> Vec<usize> {
+        self.current.options()
+    }
 }
 
 /// Position is a instance of the board.
 pub struct Position {
+    size: usize,
     capture: [u8; 2],
     bowls: Vec<u8>,
 }
@@ -75,11 +81,24 @@ pub struct Position {
 impl Position {
     /// Create a position with a number of bowls and a number of stones per bowl.
     pub fn new(bowls: u8, stones: u8) -> Self {
-        let bowls = vec![];
+        let size = bowls as usize;
+        let bowls = vec![stones; size];
         Position {
+            size,
             capture: [0, 0],
             bowls,
         }
+    }
+
+    /// Determine which bowls are playable.
+    pub fn options(&self) -> Vec<usize> {
+        let options = self.bowls[0..self.size]
+            .iter()
+            .cloned()
+            .enumerate()
+            .filter_map(|(index, stones)| if stones > 0 { Some(index) } else { None })
+            .collect();
+        return options;
     }
 }
 
@@ -87,9 +106,19 @@ impl Position {
 mod tests {
     use super::*;
 
+    #[test]
     fn fresh_game_is_not_finished() {
         let game = GameBuilder::new().bowls(6).stones(4).build();
 
         assert!(!game.finished())
+    }
+
+    #[test]
+    fn game_knows_options_to_play() {
+        let game = GameBuilder::new().bowls(3).stones(2).build();
+
+        let options = game.options();
+
+        assert_eq!(options, vec!(0, 1, 2))
     }
 }
