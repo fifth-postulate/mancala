@@ -139,14 +139,16 @@ impl Position {
     fn sow(&self, bowl: usize) -> Self {
         let mut bowls = self.bowls.clone();
         let mut stones = bowls[bowl];
-        let mut index = bowl; let mut stored = 0;
+        let mut index = bowl; let mut store_offset = 0; let mut stored = 0;
         bowls[index] = 0;
         while stones > 0 {
             index += 1;
+            if index - store_offset == 2*self.size { index = 0; store_offset = 0; }
             if index == self.size {
                 stored += 1;
+                store_offset = 1;
             } else {
-                bowls[index - stored] += 1;
+                bowls[index - store_offset] += 1;
             }
             stones -= 1;
         }
@@ -218,12 +220,22 @@ mod tests {
     }
 
     #[test]
-    fn position_should_capture_stone() {
+    fn play_that_goes_over_store_should_capture_stone() {
         let start= Position::from([2, 2, 2, 2]);
 
         let actual = start.play(1);
 
         let expected = Position::from((0, 1, [3, 2, 2, 0]));
+        assert_eq!(actual, Some(expected))
+    }
+
+    #[test]
+    fn play_that_cycles_should_start_over() {
+        let start= Position::from([6, 6, 6, 6]);
+
+        let actual = start.play(0);
+
+        let expected = Position::from((0, 1, [7, 7, 1, 8]));
         assert_eq!(actual, Some(expected))
     }
 }
