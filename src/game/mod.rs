@@ -54,6 +54,7 @@ impl GameBuilder {
 /// Game is an sequence of Positions.
 ///
 /// A Game is created with a GameBuilder.
+#[derive(Debug, PartialEq)]
 pub struct Game {
     current: Position,
     history: Vec<usize>,
@@ -69,9 +70,32 @@ impl Game {
     pub fn options(&self) -> Vec<usize> {
         self.current.options()
     }
+
+    /// Play a certain bowl.
+    ///
+    /// Fails if the bowl does not contain any stones.
+    pub fn play(&mut self, bowl: usize) -> Result<(), FoulPlay> {
+        match self.current.play(bowl) {
+            Some(position) => {
+                self.history.push(bowl);
+                self.current = position;
+                Ok(())
+            }
+
+            None => Err(FoulPlay::NoStonesInBowl),
+        }
+    }
+}
+
+/// Discriminates between all the ways a play can go wrong.
+#[derive(Debug)]
+pub enum FoulPlay {
+    /// Playing a bowl when there are no stones in the bowl, is foul play.
+    NoStonesInBowl,
 }
 
 /// Position is a instance of the board.
+#[derive(Debug, PartialEq)]
 pub struct Position {
     size: usize,
     capture: [u8; 2],
@@ -82,7 +106,7 @@ impl Position {
     /// Create a position with a number of bowls and a number of stones per bowl.
     pub fn new(bowls: u8, stones: u8) -> Self {
         let size = bowls as usize;
-        let bowls = vec![stones; size];
+        let bowls = vec![stones; 2 * size];
         Position {
             size,
             capture: [0, 0],
@@ -100,17 +124,68 @@ impl Position {
             .collect();
         return options;
     }
+
+    /// Play a certain bowl.
+    ///
+    /// If the bowl returns nothing.
+    pub fn play(&self, bowl: usize) -> Option<Self> {
+        if self.bowls[bowl] > 0 {
+            Some(self.sow(bowl))
+        } else {
+            None
+        }
+    }
+
+    fn sow(&self, bowl: usize) -> Self {
+        let mut bowls = self.bowls.clone();
+        let stones = bowls[bowl];
+        bowls[bowl] = 0;
+        for offset in 0..(stones as usize) {
+            bowls[bowl + offset + 1] += 1;
+        }
+        bowls.rotate_left(self.size);
+        // TODO correctly implement sow; capture, store
+        Position {
+            size: self.size,
+            capture: self.capture,
+            bowls,
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    fn from_position<P>(position: P) -> PlayedGameBuilder
+    where
+        P: Into<Position>,
+    {
+        PlayedGameBuilder {
+            current: position.into(),
+            history: vec![],
+        }
+    }
+
+    struct PlayedGameBuilder {
+        current: Position,
+        history: Vec<usize>,
+    }
+
+    impl PlayedGameBuilder {
+        fn with_history(self, history: Vec<usize>) -> Game {
+            Game {
+                current: self.current,
+                history,
+            }
+        }
+    }
+
     #[test]
     fn fresh_game_is_not_finished() {
         let game = GameBuilder::new().bowls(6).stones(4).build();
 
-        assert!(!game.finished())
+        assert!(!game.finished());
     }
 
     #[test]
@@ -119,6 +194,28 @@ mod tests {
 
         let options = game.options();
 
-        assert_eq!(options, vec!(0, 1, 2))
+        assert_eq!(options, vec!(0, 1, 2));
+    }
+
+    #[test]
+    fn game_records_history_of_what_is_played() -> Result<(), FoulPlay> {
+        let mut actual = GameBuilder::new().bowls(3).stones(2).build();
+
+        actual.play(0)?;
+
+        let position = [2, 2, 2, 0, 3, 3];
+        let expected = from_position(position).with_history(vec![0]);
+        assert_eq!(actual, expected);
+        Ok(())
+    }
+}
+
+impl From<[u8; 6]> for Position {
+    fn from(bowls: [u8; 6]) -> Self {
+        Position {
+            size: 3,
+            capture: [0, 0],
+            bowls: bowls.to_vec(),
+        }
     }
 }
