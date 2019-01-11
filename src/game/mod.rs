@@ -210,6 +210,26 @@ mod tests {
     }
 }
 
+impl From<[u8; 2]> for Position {
+    fn from(bowls: [u8; 2]) -> Self {
+        Position {
+            size: 1,
+            capture: [0, 0],
+            bowls: bowls.to_vec(),
+        }
+    }
+}
+
+impl From<[u8; 4]> for Position {
+    fn from(bowls: [u8; 4]) -> Self {
+        Position {
+            size: 2,
+            capture: [0, 0],
+            bowls: bowls.to_vec(),
+        }
+    }
+}
+
 impl From<[u8; 6]> for Position {
     fn from(bowls: [u8; 6]) -> Self {
         Position {
