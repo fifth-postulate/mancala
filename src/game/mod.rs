@@ -210,33 +210,20 @@ mod tests {
     }
 }
 
-
-impl From<[u8; 2]> for Position {
-    fn from(bowls: [u8; 2]) -> Self {
-        Position {
-            size: 2/2,
-            capture: [0, 0],
-            bowls: bowls.to_vec(),
+macro_rules! position_from_array_for_sizes {
+    ( $($n : expr),* ) => {
+        $(
+        impl From<[u8; $n]> for Position {
+            fn from(bowls: [u8; $n]) -> Self {
+                Position {
+                    size: $n/2,
+                    capture: [0, 0],
+                    bowls: bowls.to_vec(),
+                }
+            }
         }
+        )*
     }
 }
 
-impl From<[u8; 4]> for Position {
-    fn from(bowls: [u8; 4]) -> Self {
-        Position {
-            size: 4/2,
-            capture: [0, 0],
-            bowls: bowls.to_vec(),
-        }
-    }
-}
-
-impl From<[u8; 6]> for Position {
-    fn from(bowls: [u8; 6]) -> Self {
-        Position {
-            size: 6/2,
-            capture: [0, 0],
-            bowls: bowls.to_vec(),
-        }
-    }
-}
+position_from_array_for_sizes!(2, 4, 6);
