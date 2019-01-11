@@ -138,16 +138,20 @@ impl Position {
 
     fn sow(&self, bowl: usize) -> Self {
         let mut bowls = self.bowls.clone();
-        let stones = bowls[bowl];
-        bowls[bowl] = 0;
-        for offset in 0..(stones as usize) {
-            bowls[bowl + offset + 1] += 1;
+        let mut capture = self.capture.clone();
+        let mut stones = bowls[bowl];
+        let mut index = bowl;
+        bowls[index] = 0;
+        while stones > 0 {
+            index += 1;
+            bowls[index] += 1;
+            stones -= 1;
         }
         bowls.rotate_left(self.size);
         // TODO correctly implement sow; capture, store
         Position {
             size: self.size,
-            capture: self.capture,
+            capture: capture,
             bowls,
         }
     }
