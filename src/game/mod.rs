@@ -138,17 +138,21 @@ impl Position {
 
     fn sow(&self, bowl: usize) -> Self {
         let mut bowls = self.bowls.clone();
-        let mut capture = self.capture.clone();
         let mut stones = bowls[bowl];
-        let mut index = bowl;
+        let mut index = bowl; let mut stored = 0;
         bowls[index] = 0;
         while stones > 0 {
             index += 1;
-            bowls[index] += 1;
+            if index == self.size {
+                stored += 1;
+            } else {
+                bowls[index - stored] += 1;
+            }
             stones -= 1;
         }
+        let capture = [self.capture[1], self.capture[0] + stored as u8];
         bowls.rotate_left(self.size);
-        // TODO correctly implement sow; capture, store
+        // TODO correctly implement sow; capture
         Position {
             size: self.size,
             capture: capture,
@@ -212,6 +216,16 @@ mod tests {
         assert_eq!(actual, expected);
         Ok(())
     }
+
+    #[test]
+    fn position_should_capture_stone() {
+        let start= Position::from([2, 2, 2, 2]);
+
+        let actual = start.play(1);
+
+        let expected = Position::from((0, 1, [3, 2, 2, 0]));
+        assert_eq!(actual, Some(expected))
+    }
 }
 
 macro_rules! position_from_array_for_sizes {
@@ -231,3 +245,13 @@ macro_rules! position_from_array_for_sizes {
 }
 
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
+
+impl From<(u8, u8, [u8;4])> for Position {
+    fn from(data: (u8, u8, [u8;4])) -> Self {
+        Position {
+            size: 4/2,
+            capture: [data.0, data.1],
+            bowls: data.2.to_vec(),
+        }
+    }
+}
