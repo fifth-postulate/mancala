@@ -140,9 +140,13 @@ impl Position {
         let mut bowls = self.bowls.clone();
         let mut stones = bowls[bowl];
         let mut index = bowl; let mut store_offset = 0; let mut stored = 0;
+        let mut change_player = true;
         bowls[index] = 0;
         while stones > 0 {
             index += 1;
+            if stones == 1 && index == self.size {
+                change_player = false
+            }
             if index - store_offset == 2*self.size { index = 0; store_offset = 0; }
             if index == self.size {
                 stored += 1;
@@ -152,8 +156,11 @@ impl Position {
             }
             stones -= 1;
         }
-        let capture = [self.capture[1], self.capture[0] + stored as u8];
-        bowls.rotate_left(self.size);
+        let mut capture = [self.capture[0] + stored as u8, self.capture[1]];
+        if change_player {
+            capture = [capture[1], capture[0]];
+            bowls.rotate_left(self.size);
+        }
         // TODO correctly implement sow; capture
         Position {
             size: self.size,
@@ -238,6 +245,16 @@ mod tests {
         let expected = Position::from((0, 1, [7, 7, 1, 8]));
         assert_eq!(actual, Some(expected))
     }
+
+    #[test]
+    fn play_into_your_store_allows_an_other_turn() {
+        let start= Position::from([2, 2, 2, 2, 2, 2]);
+
+        let actual = start.play(1);
+
+        let expected = Position::from((1, 0, [2, 0, 3, 2, 2, 2]));
+        assert_eq!(actual, Some(expected))
+    }
 }
 
 macro_rules! position_from_array_for_sizes {
@@ -271,7 +288,6 @@ macro_rules! position_with_capture_from_array_for_sizes {
         )*
     }
 }
-
 
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
 position_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
