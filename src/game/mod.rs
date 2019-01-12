@@ -144,15 +144,20 @@ impl Position {
         bowls[index] = 0;
         while stones > 0 {
             index += 1;
-            if stones == 1 && index == self.size {
-                change_player = false
-            }
             if index - store_offset == 2*self.size { index = 0; store_offset = 0; }
             if index == self.size {
                 stored += 1;
                 store_offset = 1;
             } else {
                 bowls[index - store_offset] += 1;
+            }
+            if stones == 1 && index == self.size {
+                change_player = false
+            }
+            if stones == 1 && store_offset == 0 && bowls[index] == 1 {
+                let capture_index = 2*self.size - 1 - index;
+                stored += bowls[capture_index];
+                bowls[capture_index] = 0;
             }
             stones -= 1;
         }
@@ -161,7 +166,6 @@ impl Position {
             capture = [capture[1], capture[0]];
             bowls.rotate_left(self.size);
         }
-        // TODO correctly implement sow; capture
         Position {
             size: self.size,
             capture: capture,
@@ -253,6 +257,16 @@ mod tests {
         let actual = start.play(1);
 
         let expected = Position::from((1, 0, [2, 0, 3, 2, 2, 2]));
+        assert_eq!(actual, Some(expected))
+    }
+
+    #[test]
+    fn play_into_empty_bowl_captures_opposite_bowl() {
+        let start= Position::from([2, 2, 0, 2, 2, 2, 2, 2]);
+
+        let actual = start.play(0);
+
+        let expected = Position::from((0, 2, [2, 0, 2, 2, 0, 3, 1, 2]));
         assert_eq!(actual, Some(expected))
     }
 }
