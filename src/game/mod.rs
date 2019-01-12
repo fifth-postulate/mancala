@@ -63,7 +63,7 @@ pub struct Game {
 impl Game {
     /// Determine if this game is finished
     pub fn finished(&self) -> bool {
-        false
+        self.current.finished()
     }
 
     /// Determine which bowls are playable.
@@ -172,6 +172,16 @@ impl Position {
             bowls,
         }
     }
+
+    /// Determine if a position is finished
+    pub fn finished(&self) -> bool {
+        self.bowls[0..self.size]
+            .iter()
+            .all(|&stones| stones == 0) ||
+            self.bowls[self.size..(2*self.size)]
+            .iter()
+            .all(|&stones| stones == 0)
+    }
 }
 
 #[cfg(test)]
@@ -268,6 +278,13 @@ mod tests {
 
         let expected = Position::from((0, 2, [2, 0, 2, 2, 0, 3, 1, 2]));
         assert_eq!(actual, Some(expected))
+    }
+
+    #[test]
+    fn positions_with_no_stones_on_one_side_is_finished() {
+        let start= Position::from([0, 0, 2, 2]);
+
+        assert!(start.finished())
     }
 }
 
