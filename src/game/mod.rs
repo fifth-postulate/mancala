@@ -256,24 +256,22 @@ macro_rules! position_from_array_for_sizes {
     }
 }
 
+macro_rules! position_with_capture_from_array_for_sizes {
+    ( $($n : expr),* ) => {
+        $(
+            impl From<(u8, u8, [u8; $n])> for Position {
+                fn from(data: (u8, u8, [u8; $n])) -> Self {
+                    Position {
+                        size: $n/2,
+                        capture: [data.0, data.1],
+                        bowls: data.2.to_vec(),
+                    }
+                }
+            }
+        )*
+    }
+}
+
+
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
-
-impl From<(u8, u8, [u8;2])> for Position {
-    fn from(data: (u8, u8, [u8;2])) -> Self {
-        Position {
-            size: 422,
-            capture: [data.0, data.1],
-            bowls: data.2.to_vec(),
-        }
-    }
-}
-
-impl From<(u8, u8, [u8;4])> for Position {
-    fn from(data: (u8, u8, [u8;4])) -> Self {
-        Position {
-            size: 4/2,
-            capture: [data.0, data.1],
-            bowls: data.2.to_vec(),
-        }
-    }
-}
+position_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
