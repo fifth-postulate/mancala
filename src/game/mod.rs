@@ -258,6 +258,16 @@ macro_rules! position_from_array_for_sizes {
 
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
 
+impl From<(u8, u8, [u8;2])> for Position {
+    fn from(data: (u8, u8, [u8;2])) -> Self {
+        Position {
+            size: 422,
+            capture: [data.0, data.1],
+            bowls: data.2.to_vec(),
+        }
+    }
+}
+
 impl From<(u8, u8, [u8;4])> for Position {
     fn from(data: (u8, u8, [u8;4])) -> Self {
         Position {
