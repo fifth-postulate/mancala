@@ -85,6 +85,13 @@ impl Game {
             None => Err(FoulPlay::NoStonesInBowl),
         }
     }
+
+    /// Determine the score of a game.
+    ///
+    /// None if the game is not finished
+    pub fn score(&self) -> Option<i8> {
+        self.current.score()
+    }
 }
 
 /// Discriminates between all the ways a play can go wrong.
