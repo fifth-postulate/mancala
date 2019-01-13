@@ -97,9 +97,29 @@ pub enum FoulPlay {
 /// Position is a instance of the board.
 #[derive(Debug, PartialEq)]
 pub struct Position {
+    player: Player,
     size: usize,
     capture: [u8; 2],
     bowls: Vec<u8>,
+}
+
+/// The names for the player.
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Player {
+    /// The starting player
+    Red,
+    /// The other player
+    Blue,
+}
+
+impl Player {
+    /// The opposite player
+    pub fn other(&self) -> Self {
+        match *self {
+            Player::Red => Player::Blue,
+            Player::Blue => Player::Red,
+        }
+    }
 }
 
 impl Position {
@@ -108,6 +128,7 @@ impl Position {
         let size = bowls as usize;
         let bowls = vec![stones; 2 * size];
         Position {
+            player: Player::Red,
             size,
             capture: [0, 0],
             bowls,
@@ -127,7 +148,7 @@ impl Position {
 
     /// Play a certain bowl.
     ///
-    /// If the bowl returns nothing.
+    /// If the bowl is empty, returns nothing.
     pub fn play(&self, bowl: usize) -> Option<Self> {
         if self.bowls[bowl] > 0 {
             Some(self.sow(bowl))
@@ -137,6 +158,7 @@ impl Position {
     }
 
     fn sow(&self, bowl: usize) -> Self {
+        let mut player = self.player;
         let mut bowls = self.bowls.clone();
         let mut stones = bowls[bowl];
         let mut index = bowl; let mut store_offset = 0; let mut stored = 0;
@@ -163,10 +185,12 @@ impl Position {
         }
         let mut capture = [self.capture[0] + stored as u8, self.capture[1]];
         if change_player {
+            player = player.other();
             capture = [capture[1], capture[0]];
             bowls.rotate_left(self.size);
         }
         Position {
+            player,
             size: self.size,
             capture: capture,
             bowls,
@@ -234,7 +258,7 @@ mod tests {
 
         actual.play(0)?;
 
-        let position = [2, 2, 2, 0, 3, 3];
+        let position = (Player::Blue, [2, 2, 2, 0, 3, 3]);
         let expected = from_position(position).with_history(vec![0]);
         assert_eq!(actual, expected);
         Ok(())
@@ -246,7 +270,7 @@ mod tests {
 
         let actual = start.play(1);
 
-        let expected = Position::from((0, 1, [3, 2, 2, 0]));
+        let expected = Position::from((Player::Blue, 0, 1, [3, 2, 2, 0]));
         assert_eq!(actual, Some(expected))
     }
 
@@ -256,7 +280,7 @@ mod tests {
 
         let actual = start.play(0);
 
-        let expected = Position::from((0, 1, [7, 7, 1, 8]));
+        let expected = Position::from((Player::Blue, 0, 1, [7, 7, 1, 8]));
         assert_eq!(actual, Some(expected))
     }
 
@@ -276,7 +300,7 @@ mod tests {
 
         let actual = start.play(0);
 
-        let expected = Position::from((0, 2, [2, 0, 2, 2, 0, 3, 1, 2]));
+        let expected = Position::from((Player::Blue, 0, 2, [2, 0, 2, 2, 0, 3, 1, 2]));
         assert_eq!(actual, Some(expected))
     }
 
@@ -291,12 +315,31 @@ mod tests {
 macro_rules! position_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
-        impl From<[u8; $n]> for Position {
-            fn from(bowls: [u8; $n]) -> Self {
+            impl From<[u8; $n]> for Position {
+                fn from(bowls: [u8; $n]) -> Self {
+                    Position {
+                        player: Player::Red,
+                        size: $n/2,
+                        capture: [0, 0],
+                        bowls: bowls.to_vec(),
+                    }
+                }
+            }
+        )*
+    }
+}
+
+
+macro_rules! position_with_player_from_array_for_sizes {
+    ( $($n : expr),* ) => {
+        $(
+        impl From<(Player, [u8; $n])> for Position {
+            fn from(data: (Player, [u8; $n])) -> Self {
                 Position {
+                    player: data.0,
                     size: $n/2,
                     capture: [0, 0],
-                    bowls: bowls.to_vec(),
+                    bowls: data.1.to_vec(),
                 }
             }
         }
@@ -310,6 +353,7 @@ macro_rules! position_with_capture_from_array_for_sizes {
             impl From<(u8, u8, [u8; $n])> for Position {
                 fn from(data: (u8, u8, [u8; $n])) -> Self {
                     Position {
+                        player: Player::Red,
                         size: $n/2,
                         capture: [data.0, data.1],
                         bowls: data.2.to_vec(),
@@ -320,5 +364,25 @@ macro_rules! position_with_capture_from_array_for_sizes {
     }
 }
 
+
+macro_rules! position_with_player_with_capture_from_array_for_sizes {
+    ( $($n : expr),* ) => {
+        $(
+            impl From<(Player, u8, u8, [u8; $n])> for Position {
+                fn from(data: (Player, u8, u8, [u8; $n])) -> Self {
+                    Position {
+                        player: data.0,
+                        size: $n/2,
+                        capture: [data.1, data.2],
+                        bowls: data.3.to_vec(),
+                    }
+                }
+            }
+        )*
+    }
+}
+
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
+position_with_player_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
 position_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
+position_with_player_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
