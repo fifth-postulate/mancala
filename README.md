@@ -19,6 +19,46 @@ This section will define the terms in the description of this project.
 
 > area of machine learning concerned with how software agents ought to take actions in an environment so as to maximize some notion of cumulative reward. The problem, due to its generality, is studied in many other disciplines, such as game theory, control theory, operations research, information theory, simulation-based optimization, multi-agent systems, swarm intelligence, statistics and genetic algorithms.
 
+## Usage
+### Who will win?
+Let's say we are interested in a game of mancala where each player has only one bowl. Players do not have a real choice. They can only play their single bowl. So determining who wins should not be that hard. Let's use `mancala` for that.
+
+Start with announcing the `mancala` crate.
+
+```rust
+extern crate mancala;
+```
+
+Since we will be using `Position` directly import it now.
+
+```rust
+use mancala::game::Position;
+```
+
+Let's agree to start out with 8 stones each. We can create a starting position from a array in the following manner
+
+```rust
+let mut position = Position::from([8; 2]);
+```
+
+This array represents the bowls with their stones, one bowl for each player.
+
+No we want to play from the only bowl until the game is over.
+
+```rust
+while !position.finished() {
+    position = position.play(0).unwrap();
+}
+```
+
+With the game finished, we can determine the score.
+
+```rust
+println!("score {}", position.score().unwrap());
+```
+
+Now we know who is going to win.
+
 [mancala]: https://en.wikipedia.org/wiki/Mancala
 [rust]: https://www.rust-lang.org/
 [rl]: https://en.wikipedia.org/wiki/Reinforcement_learning
