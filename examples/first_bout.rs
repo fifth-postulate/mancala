@@ -12,5 +12,5 @@ fn main() {
     let game = GameBuilder::new().bowls(2).stones(4).build();
 
     let game = bout.start(game).expect("a finished game with score");
-    println!("game: {}", game.score().expect("a score"));
+    println!("game: {:?}", game);
 }

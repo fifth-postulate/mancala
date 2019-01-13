@@ -73,7 +73,7 @@ impl Default for GameBuilder {
 pub struct Game {
     /// The current position of this game
     pub current: Position,
-    history: Vec<usize>,
+    history: Vec<(Player, Bowl)>,
 }
 
 impl Game {
@@ -93,7 +93,7 @@ impl Game {
     pub fn play(&mut self, bowl: Bowl) -> Result<(), FoulPlay> {
         match self.current.play(bowl) {
             Some(position) => {
-                self.history.push(bowl);
+                self.history.push((self.current.player, bowl));
                 self.current = position;
                 Ok(())
             }
@@ -283,7 +283,7 @@ mod tests {
     }
 
     impl PlayedGameBuilder {
-        fn with_history(self, history: Vec<usize>) -> Game {
+        fn with_history(self, history: Vec<(Player, Bowl)>) -> Game {
             Game {
                 current: self.current,
                 history,
@@ -314,7 +314,7 @@ mod tests {
         actual.play(0)?;
 
         let position = (Player::Blue, [2, 2, 2, 0, 3, 3]);
-        let expected = from_position(position).with_history(vec![0]);
+        let expected = from_position(position).with_history(vec![(Player::Red, 0)]);
         assert_eq!(actual, expected);
         Ok(())
     }
