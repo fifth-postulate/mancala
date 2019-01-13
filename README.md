@@ -1,4 +1,4 @@
-# mancala
+# mancala [![Build Status](https://travis-ci.org/fifth-postulate/mancala.svg?branch=master)](https://travis-ci.org/fifth-postulate/mancala)
 Reinforcement learning Mancala, in Rust.
 
 ## What is
