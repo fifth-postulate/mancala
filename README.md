@@ -57,8 +57,9 @@ With the game finished, we can determine the score.
 println!("score {}", position.score().unwrap());
 ```
 
-Now we know who is going to win.
+Now we know who is going to win. You can see a similar [program][position2] in `src/bin`
 
 [mancala]: https://en.wikipedia.org/wiki/Mancala
 [rust]: https://www.rust-lang.org/
 [rl]: https://en.wikipedia.org/wiki/Reinforcement_learning
+[position2]: https://github.com/fifth-postulate/mancala/blob/master/src/bin/position2.rs
