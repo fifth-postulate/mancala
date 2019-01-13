@@ -7,7 +7,7 @@ use super::Strategy;
 pub struct First {}
 
 impl Strategy for First {
-    fn play(position: &Position) -> Option<Bowl> {
+    fn play(&mut self, position: &Position) -> Option<Bowl> {
         let options = position.options();
         options.first().cloned()
     }

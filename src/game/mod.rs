@@ -65,7 +65,8 @@ impl GameBuilder {
 /// A Game is created with a GameBuilder.
 #[derive(Debug, PartialEq)]
 pub struct Game {
-    current: Position,
+    /// The current position of this game
+    pub current: Position,
     history: Vec<usize>,
 }
 
@@ -100,6 +101,11 @@ impl Game {
     /// None if the game is not finished
     pub fn score(&self) -> Option<Score> {
         self.current.score()
+    }
+
+    /// Return which players turn it is
+    pub fn turn(&self) -> Player {
+        self.current.turn()
     }
 }
 
@@ -244,6 +250,11 @@ impl Position {
         } else {
             None
         }
+    }
+
+    /// Return which players turn it is
+    pub fn turn(&self) -> Player {
+        self.player
     }
 }
 
