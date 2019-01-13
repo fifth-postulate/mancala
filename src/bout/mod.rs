@@ -10,11 +10,11 @@ pub struct Bout<'a> {
 }
 
 /// Problems that can occur during a bout
+#[derive(Debug)]
 pub enum Problem {
     RightOutOfTheGate,
     IllegalPlay(Player, FoulPlay),
     NoPlay(Player),
-    NotFinished,
 }
 
 impl<'a> Bout<'a> {
@@ -24,7 +24,7 @@ impl<'a> Bout<'a> {
     }
 
     /// Start the bout. Returns the result.
-    pub fn start(&mut self, game: Game) -> Result<Score, Problem> {
+    pub fn start(&mut self, game: Game) -> Result<Game, Problem> {
         let mut game = game;
         let mut result = Err(Problem::RightOutOfTheGate);
         while !game.finished() {
@@ -41,6 +41,6 @@ impl<'a> Bout<'a> {
                 break;
             }
         }
-        result.and_then(|_| game.score().ok_or(Problem::NotFinished))
+        result.map(|_| game)
     }
 }
