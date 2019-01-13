@@ -12,6 +12,11 @@ fn main() {
             round += 1;
         }
 
-        println!("stones {}, round {}, score {}", stones, round, position.score().unwrap());
+        println!(
+            "stones {}, round {}, score {}",
+            stones,
+            round,
+            position.score().unwrap()
+        );
     }
 }
