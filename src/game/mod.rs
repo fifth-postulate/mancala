@@ -14,10 +14,19 @@
 //!     .build();
 //! ```
 
+/// Representation of a Bowl
+pub type Bowl = usize;
+
+/// Representation of a number of stones in a bowl
+pub type Stones = u8;
+
+/// Score a finished game;
+pub type Score = i8;
+
 /// GameBuilder is used to create a Mancala game.
 pub struct GameBuilder {
     bowls: u8,
-    stones: u8,
+    stones: Stones,
 }
 
 impl GameBuilder {
@@ -37,7 +46,7 @@ impl GameBuilder {
     }
 
     /// Sets the number of stones for this GameBuilder
-    pub fn stones(self, stones: u8) -> Self {
+    pub fn stones(self, stones: Stones) -> Self {
         GameBuilder { stones, ..self }
     }
 
@@ -67,14 +76,14 @@ impl Game {
     }
 
     /// Determine which bowls are playable.
-    pub fn options(&self) -> Vec<usize> {
+    pub fn options(&self) -> Vec<Bowl> {
         self.current.options()
     }
 
     /// Play a certain bowl.
     ///
     /// Fails if the bowl does not contain any stones.
-    pub fn play(&mut self, bowl: usize) -> Result<(), FoulPlay> {
+    pub fn play(&mut self, bowl: Bowl) -> Result<(), FoulPlay> {
         match self.current.play(bowl) {
             Some(position) => {
                 self.history.push(bowl);
@@ -89,7 +98,7 @@ impl Game {
     /// Determine the score of a game.
     ///
     /// None if the game is not finished
-    pub fn score(&self) -> Option<i8> {
+    pub fn score(&self) -> Option<Score> {
         self.current.score()
     }
 }
@@ -106,8 +115,8 @@ pub enum FoulPlay {
 pub struct Position {
     player: Player,
     size: usize,
-    capture: [u8; 2],
-    bowls: Vec<u8>,
+    capture: [Stones; 2],
+    bowls: Vec<Stones>,
 }
 
 /// The names for the player.
@@ -131,7 +140,7 @@ impl Player {
 
 impl Position {
     /// Create a position with a number of bowls and a number of stones per bowl.
-    pub fn new(bowls: u8, stones: u8) -> Self {
+    pub fn new(bowls: u8, stones: Stones) -> Self {
         let size = bowls as usize;
         let bowls = vec![stones; 2 * size];
         Position {
@@ -148,7 +157,7 @@ impl Position {
             .iter()
             .cloned()
             .enumerate()
-            .filter_map(|(index, stones)| if stones > 0 { Some(index) } else { None })
+            .filter_map(|(bowl, stones)| if stones > 0 { Some(bowl) } else { None })
             .collect();
         return options;
     }
@@ -156,7 +165,7 @@ impl Position {
     /// Play a certain bowl.
     ///
     /// If the bowl is empty, returns nothing.
-    pub fn play(&self, bowl: usize) -> Option<Self> {
+    pub fn play(&self, bowl: Bowl) -> Option<Self> {
         if self.bowls[bowl] > 0 {
             Some(self.sow(bowl))
         } else {
@@ -164,7 +173,7 @@ impl Position {
         }
     }
 
-    fn sow(&self, bowl: usize) -> Self {
+    fn sow(&self, bowl: Bowl) -> Self {
         let mut player = self.player;
         let mut bowls = self.bowls.clone();
         let mut stones = bowls[bowl];
@@ -195,7 +204,7 @@ impl Position {
             }
             stones -= 1;
         }
-        let mut capture = [self.capture[0] + stored as u8, self.capture[1]];
+        let mut capture = [self.capture[0] + stored as Stones, self.capture[1]];
         if change_player {
             player = player.other();
             capture = [capture[1], capture[0]];
@@ -221,15 +230,15 @@ impl Position {
     ///
     /// Positive scores are won by player red, negative scores are won by blue.
     /// Returns none if the game hasn't finished yet.
-    pub fn score(&self) -> Option<i8> {
+    pub fn score(&self) -> Option<Score> {
         if self.finished() {
-            let mut first: u8 = self.bowls[0..self.size].iter().cloned().sum();
+            let mut first: Stones = self.bowls[0..self.size].iter().cloned().sum();
             first += self.capture[0];
-            let mut second: u8 = self.bowls[self.size..2 * self.size].iter().cloned().sum();
+            let mut second: Stones = self.bowls[self.size..2 * self.size].iter().cloned().sum();
             second += self.capture[1];
             let score: i8 = match self.player {
-                Player::Red => first as i8 - second as i8,
-                Player::Blue => second as i8 - first as i8,
+                Player::Red => first as Score - second as Score,
+                Player::Blue => second as Score - first as Score,
             };
             Some(score)
         } else {
@@ -346,8 +355,8 @@ mod tests {
 macro_rules! position_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
-            impl From<[u8; $n]> for Position {
-                fn from(bowls: [u8; $n]) -> Self {
+            impl From<[Stones; $n]> for Position {
+                fn from(bowls: [Stones; $n]) -> Self {
                     Position {
                         player: Player::Red,
                         size: $n/2,
@@ -363,8 +372,8 @@ macro_rules! position_from_array_for_sizes {
 macro_rules! position_with_player_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
-        impl From<(Player, [u8; $n])> for Position {
-            fn from(data: (Player, [u8; $n])) -> Self {
+        impl From<(Player, [Stones; $n])> for Position {
+            fn from(data: (Player, [Stones; $n])) -> Self {
                 Position {
                     player: data.0,
                     size: $n/2,
@@ -380,8 +389,8 @@ macro_rules! position_with_player_from_array_for_sizes {
 macro_rules! position_with_capture_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
-            impl From<(u8, u8, [u8; $n])> for Position {
-                fn from(data: (u8, u8, [u8; $n])) -> Self {
+            impl From<(Stones, Stones, [Stones; $n])> for Position {
+                fn from(data: (Stones, Stones, [Stones; $n])) -> Self {
                     Position {
                         player: Player::Red,
                         size: $n/2,
@@ -397,8 +406,8 @@ macro_rules! position_with_capture_from_array_for_sizes {
 macro_rules! position_with_player_with_capture_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
-            impl From<(Player, u8, u8, [u8; $n])> for Position {
-                fn from(data: (Player, u8, u8, [u8; $n])) -> Self {
+            impl From<(Player, Stones, Stones, [Stones; $n])> for Position {
+                fn from(data: (Player, Stones, Stones, [Stones; $n])) -> Self {
                     Position {
                         player: data.0,
                         size: $n/2,
