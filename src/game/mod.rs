@@ -161,12 +161,17 @@ impl Position {
         let mut player = self.player;
         let mut bowls = self.bowls.clone();
         let mut stones = bowls[bowl];
-        let mut index = bowl; let mut store_offset = 0; let mut stored = 0;
+        let mut index = bowl;
+        let mut store_offset = 0;
+        let mut stored = 0;
         let mut change_player = true;
         bowls[index] = 0;
         while stones > 0 {
             index += 1;
-            if index - store_offset == 2*self.size { index = 0; store_offset = 0; }
+            if index - store_offset == 2 * self.size {
+                index = 0;
+                store_offset = 0;
+            }
             if index == self.size {
                 stored += 1;
                 store_offset = 1;
@@ -177,7 +182,7 @@ impl Position {
                 change_player = false
             }
             if stones == 1 && store_offset == 0 && bowls[index] == 1 {
-                let capture_index = 2*self.size - 1 - index;
+                let capture_index = 2 * self.size - 1 - index;
                 stored += bowls[capture_index];
                 bowls[capture_index] = 0;
             }
@@ -199,12 +204,30 @@ impl Position {
 
     /// Determine if a position is finished
     pub fn finished(&self) -> bool {
-        self.bowls[0..self.size]
-            .iter()
-            .all(|&stones| stones == 0) ||
-            self.bowls[self.size..(2*self.size)]
-            .iter()
-            .all(|&stones| stones == 0)
+        self.bowls[0..self.size].iter().all(|&stones| stones == 0)
+            || self.bowls[self.size..(2 * self.size)]
+                .iter()
+                .all(|&stones| stones == 0)
+    }
+
+    /// Determine the score after the game is finished.
+    ///
+    /// Positive scores are won by player red, negative scores are won by blue.
+    /// Returns none if the game hasn't finished yet.
+    pub fn score(&self) -> Option<i8> {
+        if self.finished() {
+            let mut first: u8 = self.bowls[0..self.size].iter().cloned().sum();
+            first += self.capture[0];
+            let mut second: u8 = self.bowls[self.size..2 * self.size].iter().cloned().sum();
+            second += self.capture[1];
+            let score: i8 = match self.player {
+                Player::Red => first as i8 - second as i8,
+                Player::Blue => second as i8 - first as i8,
+            };
+            Some(score)
+        } else {
+            None
+        }
     }
 }
 
@@ -266,7 +289,7 @@ mod tests {
 
     #[test]
     fn play_that_goes_over_store_should_capture_stone() {
-        let start= Position::from([2, 2, 2, 2]);
+        let start = Position::from([2, 2, 2, 2]);
 
         let actual = start.play(1);
 
@@ -276,7 +299,7 @@ mod tests {
 
     #[test]
     fn play_that_cycles_should_start_over() {
-        let start= Position::from([6, 6, 6, 6]);
+        let start = Position::from([6, 6, 6, 6]);
 
         let actual = start.play(0);
 
@@ -286,7 +309,7 @@ mod tests {
 
     #[test]
     fn play_into_your_store_allows_an_other_turn() {
-        let start= Position::from([2, 2, 2, 2, 2, 2]);
+        let start = Position::from([2, 2, 2, 2, 2, 2]);
 
         let actual = start.play(1);
 
@@ -296,7 +319,7 @@ mod tests {
 
     #[test]
     fn play_into_empty_bowl_captures_opposite_bowl() {
-        let start= Position::from([2, 2, 0, 2, 2, 2, 2, 2]);
+        let start = Position::from([2, 2, 0, 2, 2, 2, 2, 2]);
 
         let actual = start.play(0);
 
@@ -306,9 +329,10 @@ mod tests {
 
     #[test]
     fn positions_with_no_stones_on_one_side_is_finished() {
-        let start= Position::from([0, 0, 2, 2]);
+        let start = Position::from([0, 0, 2, 2]);
 
-        assert!(start.finished())
+        assert!(start.finished());
+        assert_eq!(start.score(), Some(-4));
     }
 }
 
@@ -328,7 +352,6 @@ macro_rules! position_from_array_for_sizes {
         )*
     }
 }
-
 
 macro_rules! position_with_player_from_array_for_sizes {
     ( $($n : expr),* ) => {
@@ -364,7 +387,6 @@ macro_rules! position_with_capture_from_array_for_sizes {
     }
 }
 
-
 macro_rules! position_with_player_with_capture_from_array_for_sizes {
     ( $($n : expr),* ) => {
         $(
@@ -383,6 +405,12 @@ macro_rules! position_with_player_with_capture_from_array_for_sizes {
 }
 
 position_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
-position_with_player_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
-position_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
-position_with_player_with_capture_from_array_for_sizes!(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32);
+position_with_player_from_array_for_sizes!(
+    2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32
+);
+position_with_capture_from_array_for_sizes!(
+    2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32
+);
+position_with_player_with_capture_from_array_for_sizes!(
+    2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32
+);
