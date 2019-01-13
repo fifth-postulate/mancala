@@ -60,6 +60,12 @@ impl GameBuilder {
     }
 }
 
+impl Default for GameBuilder {
+    fn default() -> Self {
+        GameBuilder::new()
+    }
+}
+
 /// Game is an sequence of Positions.
 ///
 /// A Game is created with a GameBuilder.
@@ -136,8 +142,8 @@ pub enum Player {
 
 impl Player {
     /// The opposite player
-    pub fn other(&self) -> Self {
-        match *self {
+    pub fn other(self) -> Self {
+        match self {
             Player::Red => Player::Blue,
             Player::Blue => Player::Red,
         }
@@ -159,13 +165,12 @@ impl Position {
 
     /// Determine which bowls are playable.
     pub fn options(&self) -> Vec<usize> {
-        let options = self.bowls[0..self.size]
+        self.bowls[0..self.size]
             .iter()
             .cloned()
             .enumerate()
             .filter_map(|(bowl, stones)| if stones > 0 { Some(bowl) } else { None })
-            .collect();
-        return options;
+            .collect()
     }
 
     /// Play a certain bowl.
@@ -219,7 +224,7 @@ impl Position {
         Position {
             player,
             size: self.size,
-            capture: capture,
+            capture,
             bowls,
         }
     }

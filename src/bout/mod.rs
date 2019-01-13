@@ -1,6 +1,6 @@
 //! Coordination of a bout between strategies.
 
-use super::game::{FoulPlay, Game, Player, Score};
+use super::game::{FoulPlay, Game, Player};
 use super::strategy::Strategy;
 
 /// Representation of the bout
