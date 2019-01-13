@@ -1,9 +1,8 @@
 extern crate mancala;
 
 use mancala::bout::Bout;
-use mancala::game::{Game, GameBuilder};
+use mancala::game::GameBuilder;
 use mancala::strategy::naive::First;
-use mancala::strategy::Strategy;
 
 fn main() {
     let mut red_strategy = First {};
