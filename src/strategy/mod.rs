@@ -2,6 +2,8 @@
 
 pub mod naive;
 
+pub use self::naive::First;
+
 use super::game::{Bowl, Position};
 
 /// A strategy for playing Mancala
