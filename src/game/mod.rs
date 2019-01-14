@@ -164,7 +164,7 @@ impl Position {
     }
 
     /// Determine which bowls are playable.
-    pub fn options(&self) -> Vec<usize> {
+    pub fn options(&self) -> Vec<Bowl> {
         self.bowls[0..self.size]
             .iter()
             .cloned()
@@ -239,18 +239,15 @@ impl Position {
 
     /// Determine the score after the game is finished.
     ///
-    /// Positive scores are won by player red, negative scores are won by blue.
-    /// Returns none if the game hasn't finished yet.
+    /// Scores are awarded to the current player. Positive scores are a win, negative scores are a loss.
     pub fn score(&self) -> Option<Score> {
         if self.finished() {
             let mut first: Stones = self.bowls[0..self.size].iter().cloned().sum();
             first += self.capture[0];
             let mut second: Stones = self.bowls[self.size..2 * self.size].iter().cloned().sum();
             second += self.capture[1];
-            let score: i8 = match self.player {
-                Player::Red => first as Score - second as Score,
-                Player::Blue => second as Score - first as Score,
-            };
+
+            let score = first as Score - second as Score;
             Some(score)
         } else {
             None
@@ -273,13 +270,11 @@ mod tests {
     {
         PlayedGameBuilder {
             current: position.into(),
-            history: vec![],
         }
     }
 
     struct PlayedGameBuilder {
         current: Position,
-        history: Vec<usize>,
     }
 
     impl PlayedGameBuilder {
@@ -365,6 +360,18 @@ mod tests {
 
         assert!(start.finished());
         assert_eq!(start.score(), Some(-4));
+    }
+
+    #[test]
+    fn play_changes_player() {
+        let start = Position::from([1, 0, 1, 0]);
+
+        let actual = start.play(0).unwrap();
+
+        let expected = Position::from((Player::Blue, 0, 1, [0, 0, 0, 1]));
+        assert_eq!(actual, expected);
+        assert_eq!(expected.score(), Some(-2));
+
     }
 }
 
