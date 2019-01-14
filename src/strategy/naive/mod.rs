@@ -1,6 +1,6 @@
 //! Naive strategies, mainly for testing purposes.
 
-use super::super::game::{Bowl, Position};
+use crate::game::{Bowl, Position};
 use super::Strategy;
 
 /// Pick the first option.

@@ -1,8 +1,10 @@
 //! Various strategies for playing Mancala
 
 pub mod naive;
+pub mod tree;
 
 pub use self::naive::First;
+pub use self::tree::minmax;
 
 use super::game::{Bowl, Position};
 
