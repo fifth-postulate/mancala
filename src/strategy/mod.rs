@@ -4,7 +4,8 @@ pub mod naive;
 pub mod tree;
 
 pub use self::naive::First;
-pub use self::tree::minmax::MinMax;
+pub use self::tree::MinMax;
+pub use self::tree::AlphaBeta;
 
 use super::game::{Bowl, Position};
 
