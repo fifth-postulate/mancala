@@ -9,7 +9,7 @@ pub use self::minmax::MinMax;
 pub use self::alphabeta::AlphaBeta;
 
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 enum Value {
     NegativeInfinity,
     Actual(Score),
@@ -68,3 +68,17 @@ impl Ord for Value {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn values_compare_correctly() {
+        assert!(Value::NegativeInfinity < Value::Actual(0));
+        assert!(Value::NegativeInfinity < Value::PositiveInfinity);
+        assert!(Value::Actual(0) > Value::NegativeInfinity);
+        assert!(Value::Actual(0) < Value::PositiveInfinity);
+        assert!(Value::PositiveInfinity > Value::NegativeInfinity);
+        assert!(Value::PositiveInfinity > Value::Actual(0));
+    }
+}

@@ -46,16 +46,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn values_compare_correctly() {
-        assert!(Value::NegativeInfinity < Value::Actual(0));
-        assert!(Value::NegativeInfinity < Value::PositiveInfinity);
-        assert!(Value::Actual(0) > Value::NegativeInfinity);
-        assert!(Value::Actual(0) < Value::PositiveInfinity);
-        assert!(Value::PositiveInfinity > Value::NegativeInfinity);
-        assert!(Value::PositiveInfinity > Value::Actual(0));
-    }
-
-    #[test]
     fn finished_games_are_scored() {
         let position = Position::from((5, 0, [0,0, 2, 2]));
 
