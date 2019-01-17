@@ -4,9 +4,9 @@
 //!
 //! > decision rule used in artificial intelligence, decision theory, game theory, statistics and philosophy for minimizing the possible loss for a worst case (maximum loss) scenario. When dealing with gains, it is referred to as "maximin"—to maximize the minimum gain. Originally formulated for two-player zero-sum game theory, covering both the cases where players take alternate moves and those where they make simultaneous moves, it has also been extended to more complex games and to general decision-making in the presence of uncertainty.
 
-use std::cmp::{Ord, PartialOrd, Ordering};
-use crate::game::{Bowl, Position, Score};
+use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
+use super::Value;
 
 /// Pick the option that maximizes the minimum win.
 pub struct MinMax {
@@ -16,65 +16,6 @@ impl Strategy for MinMax {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let (bowl, _) = minmax(&position);
         bowl
-    }
-}
-
-#[derive(Debug, PartialEq, Eq)]
-enum Value {
-    NegativeInfinity,
-    Actual(Score),
-    PositiveInfinity,
-}
-
-impl Value {
-    /// Determine the opposite of a Value
-    /// -∞ → ∞
-    ///  s → -s
-    ///  ∞ → -∞
-    pub fn opposite(&self) -> Self {
-        match *self {
-            Value::NegativeInfinity => Value::PositiveInfinity,
-            Value::Actual(score) => Value::Actual(-score),
-            Value::PositiveInfinity => Value::NegativeInfinity,
-        }
-    }
-}
-
-impl PartialOrd for Value {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Value {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match *self {
-            Value::NegativeInfinity => {
-                match *other {
-                    Value::NegativeInfinity => Ordering::Equal,
-
-                    _ => Ordering::Less,
-                }
-            },
-
-            Value::Actual(self_score) => {
-                match *other {
-                    Value::NegativeInfinity => Ordering::Greater,
-
-                    Value::Actual(other_score) => self_score.cmp(&other_score),
-
-                    Value::PositiveInfinity => Ordering::Less,
-                }
-            },
-
-            Value::PositiveInfinity => {
-                match *other {
-                    Value::PositiveInfinity => Ordering::Equal,
-
-                    _ => Ordering::Greater,
-                }
-            }
-        }
     }
 }
 
