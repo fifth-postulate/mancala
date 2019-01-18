@@ -20,8 +20,8 @@ impl Value {
     /// -∞ → ∞
     ///  s → -s
     ///  ∞ → -∞
-    pub fn opposite(&self) -> Self {
-        match *self {
+    pub fn opposite(self) -> Self {
+        match self {
             Value::NegativeInfinity => Value::PositiveInfinity,
             Value::Actual(score) => Value::Actual(-score),
             Value::PositiveInfinity => Value::NegativeInfinity,
