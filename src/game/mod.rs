@@ -371,7 +371,6 @@ mod tests {
         let expected = Position::from((Player::Blue, 0, 1, [0, 0, 0, 1]));
         assert_eq!(actual, expected);
         assert_eq!(expected.score(), Some(-2));
-
     }
 }
 

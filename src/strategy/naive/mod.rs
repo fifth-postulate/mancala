@@ -1,7 +1,7 @@
 //! Naive strategies, mainly for testing purposes.
 
-use crate::game::{Bowl, Position};
 use super::Strategy;
+use crate::game::{Bowl, Position};
 
 /// Pick the first option.
 pub struct First {}

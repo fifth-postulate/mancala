@@ -1,13 +1,12 @@
 //! Various tree strategies for playing Mancala
 
-pub mod minmax;
 pub mod alphabeta;
+pub mod minmax;
 
-use std::cmp::{Ord, PartialOrd, Ordering};
-use crate::game::Score;
-pub use self::minmax::MinMax;
 pub use self::alphabeta::AlphaBeta;
-
+pub use self::minmax::MinMax;
+use crate::game::Score;
+use std::cmp::{Ord, Ordering, PartialOrd};
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 enum Value {
@@ -39,31 +38,25 @@ impl PartialOrd for Value {
 impl Ord for Value {
     fn cmp(&self, other: &Self) -> Ordering {
         match *self {
-            Value::NegativeInfinity => {
-                match *other {
-                    Value::NegativeInfinity => Ordering::Equal,
+            Value::NegativeInfinity => match *other {
+                Value::NegativeInfinity => Ordering::Equal,
 
-                    _ => Ordering::Less,
-                }
+                _ => Ordering::Less,
             },
 
-            Value::Actual(self_score) => {
-                match *other {
-                    Value::NegativeInfinity => Ordering::Greater,
+            Value::Actual(self_score) => match *other {
+                Value::NegativeInfinity => Ordering::Greater,
 
-                    Value::Actual(other_score) => self_score.cmp(&other_score),
+                Value::Actual(other_score) => self_score.cmp(&other_score),
 
-                    Value::PositiveInfinity => Ordering::Less,
-                }
+                Value::PositiveInfinity => Ordering::Less,
             },
 
-            Value::PositiveInfinity => {
-                match *other {
-                    Value::PositiveInfinity => Ordering::Equal,
+            Value::PositiveInfinity => match *other {
+                Value::PositiveInfinity => Ordering::Equal,
 
-                    _ => Ordering::Greater,
-                }
-            }
+                _ => Ordering::Greater,
+            },
         }
     }
 }

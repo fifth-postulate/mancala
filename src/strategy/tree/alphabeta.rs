@@ -4,14 +4,13 @@
 //!
 //! > a search algorithm that seeks to decrease the number of nodes that are evaluated by the minimax algorithm in its search tree. It is an adversarial search algorithm used commonly for machine playing of two-player games (Tic-tac-toe, Chess, Go, etc.). It stops completely evaluating a move when at least one possibility has been found that proves the move to be worse than a previously examined move.
 
-use std::cmp::max;
+use super::Value;
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
-use super::Value;
+use std::cmp::max;
 
 /// Pick the option that maximizes the minimum win, pruning sub-trees along the way.
-pub struct AlphaBeta {
-}
+pub struct AlphaBeta {}
 
 impl Strategy for AlphaBeta {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
@@ -20,10 +19,13 @@ impl Strategy for AlphaBeta {
     }
 }
 
-fn alpha_beta(position: &Position, alpha_prime: Value, beta:Value) -> (Option<Bowl>, Value) {
+fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value) -> (Option<Bowl>, Value) {
     let mut alpha = alpha_prime;
     if position.finished() {
-        (None, Value::Actual(position.score().expect("finished game to have a score")))
+        (
+            None,
+            Value::Actual(position.score().expect("finished game to have a score")),
+        )
     } else {
         let mut best_bowl = None;
         let mut best_value = Value::NegativeInfinity;
@@ -52,12 +54,12 @@ fn alpha_beta(position: &Position, alpha_prime: Value, beta:Value) -> (Option<Bo
 
 #[cfg(test)]
 mod tests {
-    use crate::game::Position;
     use super::*;
+    use crate::game::Position;
 
     #[test]
     fn finished_games_are_scored() {
-        let position = Position::from((5, 0, [0,0, 2, 2]));
+        let position = Position::from((5, 0, [0, 0, 2, 2]));
 
         let (bowl, value) = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity);
 
@@ -67,7 +69,7 @@ mod tests {
 
     #[test]
     fn only_bowl_is_selected() {
-        let position = Position::from([1,0,1,0]);
+        let position = Position::from([1, 0, 1, 0]);
 
         let result = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity);
 
@@ -76,7 +78,7 @@ mod tests {
 
     #[test]
     fn best_bowl_is_selected() {
-        let position = Position::from([1,2,1,0,2,1]);
+        let position = Position::from([1, 2, 1, 0, 2, 1]);
 
         let (_, value) = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity);
 
