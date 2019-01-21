@@ -59,7 +59,38 @@ println!("score {}", position.score().unwrap());
 
 Now we know who is going to win. You can see a similar [program][position2] in `src/bin`
 
+## Strategies
+A strategy is an algorithm that determines what to play in a given situation. A strategy can have a profound impact. For example below there is a comparison between the strategies [`MinMax`][minmax] en [`AlphaBeta`][alphabeta].
+
+Both strategies are used to determine which player will win for a mancala game with two bowls and a number of stones between 1 and 14.
+
+| number of stones | Score |
+|                1 |    -2 |
+|                2 |    -2 |
+|                3 |     4 |
+|                4 |    1- |
+|                5 |     6 |
+|                6 |    -8 |
+|                7 |    12 |
+|                8 |    -4 |
+|                9 |   -10 |
+|               10 |     6 |
+|               11 |    -6 |
+|               12 |    14 |
+|               13 |    -6 |
+|               14 |    -4 |
+
+The time it took to produce these result are found below
+
+| Algorithm   |  Time |
+| `MinMax`    | 25.21 |
+| `AlphaBeta` | 0.59  |
+
+Which is quit impressive.
+
 [mancala]: https://en.wikipedia.org/wiki/Mancala
 [rust]: https://www.rust-lang.org/
 [rl]: https://en.wikipedia.org/wiki/Reinforcement_learning
 [position2]: https://github.com/fifth-postulate/mancala/blob/master/src/bin/position2.rs
+[minmax]: https://en.wikipedia.org/wiki/Minimax
+[alphabeta]: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
