@@ -65,6 +65,7 @@ A strategy is an algorithm that determines what to play in a given situation. A 
 Both strategies are used to determine which player will win for a mancala game with two bowls and a number of stones between 1 and 14.
 
 | number of stones | Score |
+|------------------|-------|
 |                1 |    -2 |
 |                2 |    -2 |
 |                3 |     4 |
@@ -83,8 +84,9 @@ Both strategies are used to determine which player will win for a mancala game w
 The time it took to produce these result are found below
 
 | Algorithm   |  Time |
+|-------------|-------|
 | `MinMax`    | 25.21 |
-| `AlphaBeta` | 0.59  |
+| `AlphaBeta` |  0.59 |
 
 Which is quit impressive.
 
