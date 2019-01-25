@@ -14,6 +14,8 @@
 //!     .build();
 //! ```
 
+use std::fmt::{self, Display, Formatter};
+
 /// Representation of a Bowl
 pub type Bowl = usize;
 
@@ -257,6 +259,28 @@ impl Position {
     /// Return which players turn it is
     pub fn turn(&self) -> Player {
         self.player
+    }
+}
+
+impl Display for Position {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let current_side = &self.bowls[0..self.size];
+        let opposite_side: &Vec<Stones> = &self.bowls[self.size..]
+            .iter()
+            .cloned()
+            .rev()
+            .collect();
+
+        write!(f, "{:<3}", self.capture[1])?;
+        for stones in opposite_side {
+            write!(f, "| {:<3} ", stones)?
+        }
+        writeln!(f, "|")?;
+        write!(f, "{:<3}", "")?;
+        for stones in current_side {
+            write!(f, "| {:<3} ", stones)?
+        }
+        writeln!(f, "| {:<3}", self.capture[0])
     }
 }
 
