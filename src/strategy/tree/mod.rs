@@ -61,6 +61,40 @@ impl Ord for Value {
     }
 }
 
+/// Determine the search depth of tree algorithms
+pub enum Depth {
+    /// No limit on the search depth
+    Infinite,
+    /// Limit the search depth
+    Limit(u8),
+}
+
+impl Depth {
+    /// Determine if we can go any deeper.
+    pub fn is_zero(&self) -> bool {
+        match self {
+            Depth::Infinite => false,
+
+            Depth::Limit(depth) => *depth == 0u8,
+        }
+    }
+
+    /// Return preceding depth.
+    pub fn decrement(&self) -> Self {
+        match self {
+            Depth::Infinite => Depth::Infinite,
+
+            Depth::Limit(depth) => {
+                if *depth == 0 {
+                    Depth::Limit(0)
+                } else {
+                    Depth::Limit(depth - 1)
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

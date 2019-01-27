@@ -6,7 +6,7 @@ use mancala::bout::Bout;
 use mancala::game::GameBuilder;
 use mancala::strategy::AlphaBeta;
 
-const maximum_allowed_duration: Duration = Duration::from_millis(450);
+const MAXIMUM_ALLOWED_DURATION: Duration = Duration::from_millis(450);
 
 #[test]
 fn calculating_end_games_should_be_quick() {
@@ -24,5 +24,5 @@ fn calculating_end_games_should_be_quick() {
         .duration_since(start_time)
         .expect("a duration");
 
-    assert!(duration < maximum_allowed_duration); 
+    assert!(duration < MAXIMUM_ALLOWED_DURATION); 
 }
