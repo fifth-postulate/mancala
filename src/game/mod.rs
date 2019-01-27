@@ -256,6 +256,11 @@ impl Position {
         }
     }
 
+    /// Difference between the actual captured stones
+    pub fn delta(&self) -> Score {
+        self.capture[0] as Score - self.capture[1] as Score
+    }
+
     /// Return which players turn it is
     pub fn turn(&self) -> Player {
         self.player

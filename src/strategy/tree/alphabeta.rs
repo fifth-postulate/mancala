@@ -21,11 +21,18 @@ impl Strategy for AlphaBeta {
 
 fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value, search_depth: Depth) -> (Option<Bowl>, Value) {
     let mut alpha = alpha_prime;
-    if position.finished() {
-        (
-            None,
-            Value::Actual(position.score().expect("finished game to have a score")),
-        )
+    if position.finished() || search_depth.is_zero() {
+        if position.finished() {
+            (
+                None,
+                Value::Actual(position.score().expect("finished game to have a score")),
+            )
+        } else {
+            (
+                None,
+                Value::Actual(position.delta()),
+            )
+        }
     } else {
         let mut best_bowl = None;
         let mut best_value = Value::NegativeInfinity;
