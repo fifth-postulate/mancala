@@ -10,8 +10,8 @@ const MAXIMUM_ALLOWED_DURATION: Duration = Duration::from_millis(450);
 
 #[test]
 fn calculating_end_games_should_be_quick() {
-    let mut red_strategy = AlphaBeta {};
-    let mut blue_strategy = AlphaBeta {};
+    let mut red_strategy = AlphaBeta::new();
+    let mut blue_strategy = AlphaBeta::new();
     let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
 
     let start_time = SystemTime::now();
