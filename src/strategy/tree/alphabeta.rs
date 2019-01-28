@@ -19,6 +19,10 @@ impl AlphaBeta {
     pub fn new() -> Self {
         AlphaBeta { search_depth: Depth::Infinite, }
     }
+
+    pub fn limited_to(search_depth: Depth) -> Self {
+        AlphaBeta { search_depth }
+    }
 }
 
 impl Strategy for AlphaBeta {
