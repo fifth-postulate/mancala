@@ -15,11 +15,12 @@ pub struct AlphaBeta {
 }
 
 impl AlphaBeta {
-    /// create a alpha beta strategy with an infinite search depth
+    /// create an alpha beta strategy with an infinite search depth
     pub fn new() -> Self {
         AlphaBeta { search_depth: Depth::Infinite, }
     }
 
+    /// create an alpha beta strategy with a limited search depth
     pub fn limited_to(search_depth: Depth) -> Self {
         AlphaBeta { search_depth }
     }
