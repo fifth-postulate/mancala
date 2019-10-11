@@ -5,11 +5,17 @@ pub mod minmax;
 
 pub use self::alphabeta::AlphaBeta;
 pub use self::minmax::MinMax;
-use crate::game::Score;
+use crate::game::{Position, Score};
 use std::cmp::{Ord, Ordering, PartialOrd};
 
+/// A way to evaluate a position without full knowledge of the game tree
+pub trait Heuristic {
+    /// Return the heuristic value for this position
+    fn evaluate(&self, position: &Position) -> Value;
+}
+
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-enum Value {
+pub enum Value {
     NegativeInfinity,
     Actual(Score),
     PositiveInfinity,
