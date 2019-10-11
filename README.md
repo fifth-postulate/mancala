@@ -57,7 +57,66 @@ With the game finished, we can determine the score.
 println!("score {}", position.score().unwrap());
 ```
 
-Now we know who is going to win. You can see a similar [program][position2] in `src/bin`
+Now we know who is going to win. You can see a similar [program][position2] in `examples/position2`.
+
+### Play the computer
+If you want to play Mancala against the computer this crate has got you covered as well.
+
+Since we are going to use this crate we should better announce that.
+
+```rust
+extern crate mancala;
+```
+
+Next we need a few imports that will help us setup the game. the `std::ops::Neg` is used to show the correct score.
+
+```rust
+use std::ops::Neg;
+use mancala::bout::Bout;
+use mancala::game::{GameBuilder, Player};
+use mancala::strategy::tree::Depth;
+use mancala::strategy::{AlphaBeta, User};
+```
+
+Since this is a program, we need a `main` function.
+
+```rust
+fn main() {
+    ...
+}
+```
+
+We first need two strategies. One `User` strategy and a `AlphaBeta` strategy limited to a depth of 10. Changing this parameter will influence how strong the computer plays and the amount of time the computer takes to come up with an play. With these two strategies we are ready to create a `Bout`.
+
+```rust
+    lt mut red_strategy = User {};
+    let mut blue_strategy = AlphaBeta::limited_to(Depth::Limit(10));
+    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
+```
+
+Next, we create a game with 6 bowls each and 4 stones per bowl.
+
+```rust
+    let game = GameBuilder::new().bowls(6).stones(4).build();
+```
+
+and start the bout between the strategies.
+
+```rust
+    let result = bout.start(game).expect("a finished game with score");
+```
+
+The result is a position which can be asked for the score. We will show the score for the start player, which is `Red` and need to negate the score if the position is `Blue`, since this is a [zero-sum game][zero-sum].
+
+```rust
+    let mut score = result.score().expect("a defined score");
+    if result.turn() != Player::Red {
+        score = score.neg();
+    }
+    println!("{:?}", score);
+```
+
+A variant of the above is already made into a [program][play] in `src/bin/play.rs`.
 
 ## Strategies
 A strategy is an algorithm that determines what to play in a given situation. A strategy can have a profound impact. For example below there is a comparison between the strategies [`MinMax`][minmax] en [`AlphaBeta`][alphabeta].
@@ -93,6 +152,8 @@ Which is quit impressive.
 [mancala]: https://en.wikipedia.org/wiki/Mancala
 [rust]: https://www.rust-lang.org/
 [rl]: https://en.wikipedia.org/wiki/Reinforcement_learning
-[position2]: https://github.com/fifth-postulate/mancala/blob/master/src/bin/position2.rs
+[position2]: https://github.com/fifth-postulate/mancala/blob/master/examples/position2.rs
+[zero-sum]: https://en.wikipedia.org/wiki/Zero-sum_game
+[play]: https://github.com/fifth-postulate/mancala/blob/master/src/bin/play.rs
 [minmax]: https://en.wikipedia.org/wiki/Minimax
 [alphabeta]: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
