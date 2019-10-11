@@ -69,7 +69,7 @@ Both strategies are used to determine which player will win for a mancala game w
 |                1 |    -2 |
 |                2 |    -2 |
 |                3 |     4 |
-|                4 |    1- |
+|                4 |    -1 |
 |                5 |     6 |
 |                6 |    -8 |
 |                7 |    12 |
