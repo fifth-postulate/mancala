@@ -3,11 +3,41 @@
 //! The [alpha-beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) is a
 //!
 //! > a search algorithm that seeks to decrease the number of nodes that are evaluated by the minimax algorithm in its search tree. It is an adversarial search algorithm used commonly for machine playing of two-player games (Tic-tac-toe, Chess, Go, etc.). It stops completely evaluating a move when at least one possibility has been found that proves the move to be worse than a previously examined move.
+//! 
+//! The way to create a `AlphaBeta` strategy is
+//! 
+//! ```
+//! strategy = alpha_beta_strategy().limited_to(Depth::Limit(5)),with_heuristic(delta()).build();
+//! ```
 
 use super::{Value, Depth, Heuristic};
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 use std::cmp::max;
+
+/// Build AlphaBeta strategy instances
+pub struct AlphaBetaBuilder<H> where H : Heuristic + Sized {
+    search_depth: Depth,
+    heuristic: H,
+}
+
+impl<H> AlphaBetaBuilder<H> where H : Heuristic + Sized {
+   /// Build an Alpha Beta strategy
+    pub fn build(self) -> AlphaBeta<H> {
+        AlphaBeta { search_depth: self.search_depth, heuristic: self.heuristic }
+    }
+
+    /// limited to a certain search depth
+    pub fn limited_to(mut self, search_depth: Depth) -> Self {
+        self.search_depth = search_depth;
+        self
+    }
+
+    /// with a certain heuristic
+    pub fn with_heurstic<H_>(self, heuristic: H_) -> AlphaBetaBuilder<H_> where H_ : Heuristic + Sized {
+        AlphaBetaBuilder { search_depth: self.search_depth, heuristic: heuristic }
+    }
+}
 
 /// Pick the option that maximizes the minimum win, pruning sub-trees along the way.
 pub struct AlphaBeta<H> where H : Heuristic + Sized {
@@ -16,14 +46,11 @@ pub struct AlphaBeta<H> where H : Heuristic + Sized {
 }
 
 impl AlphaBeta<Delta> {
-    /// create an alpha beta strategy with an infinite search depth
-    pub fn new() -> Self {
-        AlphaBeta { search_depth: Depth::Infinite, heuristic: Delta {} }
-    }
-
-    /// create an alpha beta strategy with a limited search depth
-    pub fn limited_to(search_depth: Depth) -> Self {
-        AlphaBeta { search_depth, heuristic: Delta {} }
+    /// Create a default AlphaBetaBuilder
+    /// 
+    /// It has an unlimited search depth and the Delta heuristic.
+    pub fn strategy() -> AlphaBetaBuilder<Delta> {
+        AlphaBetaBuilder { search_depth: Depth::Infinite, heuristic: delta() }
     }
 }
 
@@ -74,8 +101,13 @@ fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value, search_depth
     }
 }
 
-// A simple heuristic that looks at the difference between the captured stones.
+/// A simple heuristic that looks at the difference between the captured stones.
 pub struct Delta {}
+
+/// create a delta heuristic
+pub fn delta() -> Delta {
+    Delta {}
+}
 
 impl Heuristic for Delta {
     fn evaluate(&self, position: &Position) -> Value {

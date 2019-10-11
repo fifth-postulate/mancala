@@ -5,8 +5,8 @@ use mancala::game::GameBuilder;
 use mancala::strategy::AlphaBeta;
 
 fn main() {
-    let mut red_strategy = AlphaBeta::new();
-    let mut blue_strategy = AlphaBeta::new();
+    let mut red_strategy = AlphaBeta::strategy().build();
+    let mut blue_strategy = AlphaBeta::strategy().build();
     let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
 
     for stones in 1..15 {

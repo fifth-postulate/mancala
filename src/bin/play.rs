@@ -39,7 +39,7 @@ fn main() {
 
     let mut red_strategy = user();
     let depth = matches.value_of("depth").unwrap().parse().unwrap_or(5);
-    let mut blue_strategy = AlphaBeta::limited_to(Depth::Limit(depth));
+    let mut blue_strategy = AlphaBeta::strategy().limited_to(Depth::Limit(depth)).build();
     let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
 
     let bowls = matches.value_of("bowls").unwrap().parse().unwrap_or(6);

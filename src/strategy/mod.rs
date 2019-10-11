@@ -9,7 +9,7 @@ pub use self::tree::AlphaBeta;
 pub use self::tree::MinMax;
 pub use self::user::user;
 
-use super::game::{Bowl, Position, Score};
+use super::game::{Bowl, Position};
 
 /// A strategy for playing Mancala
 pub trait Strategy {
