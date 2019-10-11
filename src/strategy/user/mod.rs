@@ -8,6 +8,10 @@ use crate::strategy::Strategy;
 /// Ask the user for a play.
 pub struct User {}
 
+pub fn user() -> User {
+    User {}
+}
+
 impl Strategy for User {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let plays = position.options();

@@ -6,7 +6,7 @@ use clap::{Arg, App};
 use mancala::bout::Bout;
 use mancala::game::{GameBuilder, Player};
 use mancala::strategy::tree::Depth;
-use mancala::strategy::{AlphaBeta, User};
+use mancala::strategy::{AlphaBeta, user};
 
 fn main() {
     let matches = App::new("Play Mancala")
@@ -37,7 +37,7 @@ fn main() {
                          .get_matches();
 
 
-    let mut red_strategy = User {};
+    let mut red_strategy = user();
     let depth = matches.value_of("depth").unwrap().parse().unwrap_or(5);
     let mut blue_strategy = AlphaBeta::limited_to(Depth::Limit(depth));
     let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);

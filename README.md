@@ -89,7 +89,7 @@ fn main() {
 We first need two strategies. One `User` strategy and a `AlphaBeta` strategy limited to a depth of 10. Changing this parameter will influence how strong the computer plays and the amount of time the computer takes to come up with an play. With these two strategies we are ready to create a `Bout`.
 
 ```rust
-    lt mut red_strategy = User {};
+    lt mut red_strategy = user();
     let mut blue_strategy = AlphaBeta::limited_to(Depth::Limit(10));
     let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
 ```

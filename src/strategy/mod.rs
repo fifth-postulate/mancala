@@ -7,7 +7,7 @@ pub mod user;
 pub use self::naive::First;
 pub use self::tree::AlphaBeta;
 pub use self::tree::MinMax;
-pub use self::user::User;
+pub use self::user::user;
 
 use super::game::{Bowl, Position};
 
