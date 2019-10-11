@@ -14,6 +14,12 @@ pub trait Heuristic {
     fn evaluate(&self, position: &Position) -> Value;
 }
 
+impl <F> Heuristic for F where F : Fn(&Position) -> Value {
+    fn evaluate(&self, position: &Position) -> Value {
+        self(position)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Value {
     NegativeInfinity,
