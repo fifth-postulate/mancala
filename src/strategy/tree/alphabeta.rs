@@ -49,7 +49,7 @@ where
     {
         AlphaBetaBuilder {
             search_depth: self.search_depth,
-            heuristic: heuristic,
+            heuristic,
         }
     }
 }
