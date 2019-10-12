@@ -1,6 +1,6 @@
 extern crate mancala;
 
-use std::time::{SystemTime, Duration};
+use std::time::{Duration, SystemTime};
 
 use mancala::bout::Bout;
 use mancala::game::GameBuilder;
@@ -20,9 +20,7 @@ fn calculating_end_games_should_be_quick() {
         let _result = bout.start(game).expect("a finished game with score");
     }
     let finish_time = SystemTime::now();
-    let duration = finish_time
-        .duration_since(start_time)
-        .expect("a duration");
+    let duration = finish_time.duration_since(start_time).expect("a duration");
 
-    assert!(duration < MAXIMUM_ALLOWED_DURATION); 
+    assert!(duration < MAXIMUM_ALLOWED_DURATION);
 }

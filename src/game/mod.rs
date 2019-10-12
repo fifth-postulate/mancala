@@ -270,11 +270,7 @@ impl Position {
 impl Display for Position {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let current_side = &self.bowls[0..self.size];
-        let opposite_side: &Vec<Stones> = &self.bowls[self.size..]
-            .iter()
-            .cloned()
-            .rev()
-            .collect();
+        let opposite_side: &Vec<Stones> = &self.bowls[self.size..].iter().cloned().rev().collect();
 
         write!(f, "{:<3}", self.capture[1])?;
         for stones in opposite_side {

@@ -3,28 +3,37 @@
 //! The [alpha-beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) is a
 //!
 //! > a search algorithm that seeks to decrease the number of nodes that are evaluated by the minimax algorithm in its search tree. It is an adversarial search algorithm used commonly for machine playing of two-player games (Tic-tac-toe, Chess, Go, etc.). It stops completely evaluating a move when at least one possibility has been found that proves the move to be worse than a previously examined move.
-//! 
+//!
 //! The way to create a `AlphaBeta` strategy is
-//! 
+//!
 //! ```
 //! strategy = alpha_beta_strategy().limited_to(Depth::Limit(5)),with_heuristic(delta()).build();
 //! ```
 
-use super::{Value, Depth, Heuristic};
+use super::{Depth, Heuristic, Value};
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 use std::cmp::max;
 
 /// Build AlphaBeta strategy instances
-pub struct AlphaBetaBuilder<H> where H : Heuristic + Sized {
+pub struct AlphaBetaBuilder<H>
+where
+    H: Heuristic + Sized,
+{
     search_depth: Depth,
     heuristic: H,
 }
 
-impl<H> AlphaBetaBuilder<H> where H : Heuristic + Sized {
-   /// Build an Alpha Beta strategy
+impl<H> AlphaBetaBuilder<H>
+where
+    H: Heuristic + Sized,
+{
+    /// Build an Alpha Beta strategy
     pub fn build(self) -> AlphaBeta<H> {
-        AlphaBeta { search_depth: self.search_depth, heuristic: self.heuristic }
+        AlphaBeta {
+            search_depth: self.search_depth,
+            heuristic: self.heuristic,
+        }
     }
 
     /// limited to a certain search depth
@@ -34,34 +43,61 @@ impl<H> AlphaBetaBuilder<H> where H : Heuristic + Sized {
     }
 
     /// with a certain heuristic
-    pub fn with_heurstic<H_>(self, heuristic: H_) -> AlphaBetaBuilder<H_> where H_ : Heuristic + Sized {
-        AlphaBetaBuilder { search_depth: self.search_depth, heuristic: heuristic }
+    pub fn with_heurstic<H_>(self, heuristic: H_) -> AlphaBetaBuilder<H_>
+    where
+        H_: Heuristic + Sized,
+    {
+        AlphaBetaBuilder {
+            search_depth: self.search_depth,
+            heuristic: heuristic,
+        }
     }
 }
 
 /// Pick the option that maximizes the minimum win, pruning sub-trees along the way.
-pub struct AlphaBeta<H> where H : Heuristic + Sized {
+pub struct AlphaBeta<H>
+where
+    H: Heuristic + Sized,
+{
     search_depth: Depth,
     heuristic: H,
 }
 
 impl AlphaBeta<Delta> {
     /// Create a default AlphaBetaBuilder
-    /// 
+    ///
     /// It has an unlimited search depth and the Delta heuristic.
     pub fn strategy() -> AlphaBetaBuilder<Delta> {
-        AlphaBetaBuilder { search_depth: Depth::Infinite, heuristic: delta() }
+        AlphaBetaBuilder {
+            search_depth: Depth::Infinite,
+            heuristic: delta(),
+        }
     }
 }
 
-impl <H> Strategy for AlphaBeta<H> where H : Heuristic + Sized {
+impl<H> Strategy for AlphaBeta<H>
+where
+    H: Heuristic + Sized,
+{
     fn play(&mut self, position: &Position) -> Option<Bowl> {
-        let (bowl, _) = alpha_beta(position, Value::NegativeInfinity, Value::PositiveInfinity, &self.search_depth, &self.heuristic);
+        let (bowl, _) = alpha_beta(
+            position,
+            Value::NegativeInfinity,
+            Value::PositiveInfinity,
+            &self.search_depth,
+            &self.heuristic,
+        );
         bowl
     }
 }
 
-fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value, search_depth: &Depth, heuristic: &Heuristic) -> (Option<Bowl>, Value) {
+fn alpha_beta(
+    position: &Position,
+    alpha_prime: Value,
+    beta: Value,
+    search_depth: &Depth,
+    heuristic: &dyn Heuristic,
+) -> (Option<Bowl>, Value) {
     let mut alpha = alpha_prime;
     if position.finished() || search_depth.is_zero() {
         if position.finished() {
@@ -70,10 +106,7 @@ fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value, search_depth
                 Value::Actual(position.score().expect("finished game to have a score")),
             )
         } else {
-            (
-                None,
-                heuristic.evaluate(position),
-            )
+            (None, heuristic.evaluate(position))
         }
     } else {
         let mut best_bowl = None;
@@ -82,10 +115,22 @@ fn alpha_beta(position: &Position, alpha_prime: Value, beta: Value, search_depth
             let candidate_position = position.play(bowl).expect("option to be playable");
             let value;
             if candidate_position.turn() == position.turn() {
-                let tuple = alpha_beta(&candidate_position, alpha, beta, &search_depth.decrement(), heuristic);
+                let tuple = alpha_beta(
+                    &candidate_position,
+                    alpha,
+                    beta,
+                    &search_depth.decrement(),
+                    heuristic,
+                );
                 value = tuple.1;
             } else {
-                let tuple = alpha_beta(&candidate_position, beta.opposite(), alpha.opposite(), &search_depth.decrement(), heuristic);
+                let tuple = alpha_beta(
+                    &candidate_position,
+                    beta.opposite(),
+                    alpha.opposite(),
+                    &search_depth.decrement(),
+                    heuristic,
+                );
                 value = tuple.1.opposite()
             }
             if value > best_value {
@@ -125,7 +170,13 @@ mod tests {
         let position = Position::from((5, 0, [0, 0, 2, 2]));
         let heuristic = Delta {};
 
-        let (bowl, value) = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity, &Depth::Infinite, &heuristic);
+        let (bowl, value) = alpha_beta(
+            &position,
+            Value::NegativeInfinity,
+            Value::PositiveInfinity,
+            &Depth::Infinite,
+            &heuristic,
+        );
 
         assert_eq!(value, Value::Actual(1));
         assert_eq!(bowl, None);
@@ -136,7 +187,13 @@ mod tests {
         let position = Position::from([1, 0, 1, 0]);
         let heuristic = Delta {};
 
-        let result = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity, &Depth::Infinite, &heuristic);
+        let result = alpha_beta(
+            &position,
+            Value::NegativeInfinity,
+            Value::PositiveInfinity,
+            &Depth::Infinite,
+            &heuristic,
+        );
 
         assert_eq!(result, (Some(0), Value::Actual(2)));
     }
@@ -146,8 +203,13 @@ mod tests {
         let position = Position::from([1, 2, 1, 0, 2, 1]);
         let heuristic = Delta {};
 
-
-        let (_, value) = alpha_beta(&position, Value::NegativeInfinity, Value::PositiveInfinity, &Depth::Infinite, &heuristic);
+        let (_, value) = alpha_beta(
+            &position,
+            Value::NegativeInfinity,
+            Value::PositiveInfinity,
+            &Depth::Infinite,
+            &heuristic,
+        );
 
         assert_eq!(value, Value::Actual(5));
     }

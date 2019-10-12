@@ -1,9 +1,9 @@
 //! A strategy that allows user interaction.
 //!
 //!
-use std::io;
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
+use std::io;
 
 /// Ask the user for a play.
 pub struct User {}
@@ -34,9 +34,7 @@ impl Strategy for User {
                     }
                 }
 
-                Err(_) => {
-                    println!("enter a bowl.")
-                }
+                Err(_) => println!("enter a bowl."),
             }
         }
 

@@ -19,7 +19,7 @@ pub enum Problem {
 
 impl<'a> Bout<'a> {
     /// Create a bout between strategies.
-    pub fn new(red_strategy: &'a mut Strategy, blue_strategy: &'a mut Strategy) -> Self {
+    pub fn new(red_strategy: &'a mut dyn Strategy, blue_strategy: &'a mut dyn Strategy) -> Self {
         Bout {
             red_strategy,
             blue_strategy,
