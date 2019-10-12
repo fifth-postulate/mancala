@@ -7,7 +7,10 @@
 //! The way to create a `AlphaBeta` strategy is
 //!
 //! ```
-//! strategy = alpha_beta_strategy().limited_to(Depth::Limit(5)),with_heuristic(delta()).build();
+//! use mancala::strategy::tree::{AlphaBeta, Depth};
+//! use mancala::strategy::tree::alphabeta::delta;
+//! 
+//! let strategy = AlphaBeta::strategy().limited_to(Depth::Limit(5)).with_heuristic(delta()).build();
 //! ```
 
 use super::{Depth, Heuristic, Value};
@@ -43,7 +46,7 @@ where
     }
 
     /// with a certain heuristic
-    pub fn with_heurstic<H_>(self, heuristic: H_) -> AlphaBetaBuilder<H_>
+    pub fn with_heuristic<H_>(self, heuristic: H_) -> AlphaBetaBuilder<H_>
     where
         H_: Heuristic + Sized,
     {
