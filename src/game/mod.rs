@@ -239,6 +239,11 @@ impl Position {
                 .all(|&stones| stones == 0)
     }
 
+    /// Which player is allowed to make a play
+    pub fn active_player(&self) -> Player {
+        self.player
+    }
+
     /// Determine the score after the game is finished.
     ///
     /// Scores are awarded to the current player. Positive scores are a win, negative scores are a loss.

@@ -125,20 +125,20 @@ Both strategies are used to determine which player will win for a mancala game w
 
 | number of stones | Score |
 |------------------|-------|
-|                1 |    -2 |
+|                1 |     2 |
 |                2 |    -2 |
-|                3 |     4 |
-|                4 |    -1 |
+|                3 |    -4 |
+|                4 |   -10 |
 |                5 |     6 |
-|                6 |    -8 |
+|                6 |     8 |
 |                7 |    12 |
-|                8 |    -4 |
+|                8 |     4 |
 |                9 |   -10 |
-|               10 |     6 |
-|               11 |    -6 |
+|               10 |    -6 |
+|               11 |     6 |
 |               12 |    14 |
-|               13 |    -6 |
-|               14 |    -4 |
+|               13 |     6 |
+|               14 |     4 |
 
 The time it took to produce these result are found below
 
