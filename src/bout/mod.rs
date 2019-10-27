@@ -12,8 +12,11 @@ pub struct Bout<'a> {
 /// Problems that can occur during a bout
 #[derive(Debug)]
 pub enum Problem {
+    /// A problem that occurs before plays have been made
     RightOutOfTheGate,
+    /// A player played an illegal move
     IllegalPlay(Player, FoulPlay),
+    /// A player did not make a play
     NoPlay(Player),
 }
 

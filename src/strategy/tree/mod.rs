@@ -23,10 +23,16 @@ where
     }
 }
 
+/// Positions can have a value `v`
+/// 
+/// It ranges from -∞ and ∞
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Value {
+    /// Represent the lowest possible value for a position
     NegativeInfinity,
+    /// Actual value or an estimate of the actual value of a position
     Actual(Score),
+    /// Represent the highest possible value for a position
     PositiveInfinity,
 }
 

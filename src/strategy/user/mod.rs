@@ -1,6 +1,7 @@
 //! A strategy that allows user interaction.
 //!
-//!
+//! It displays a position on standard out and asks the user what to play.
+//! Plays are given by index, which is zero based.
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 use std::io;
@@ -8,6 +9,7 @@ use std::io;
 /// Ask the user for a play.
 pub struct User {}
 
+/// Create the user strategy
 pub fn user() -> User {
     User {}
 }
