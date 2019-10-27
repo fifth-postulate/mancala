@@ -9,7 +9,7 @@
 //! ```
 //! use mancala::strategy::tree::{AlphaBeta, Depth};
 //! use mancala::strategy::tree::alphabeta::delta;
-//! 
+//!
 //! let strategy = AlphaBeta::strategy().limited_to(Depth::Limit(5)).with_heuristic(delta()).build();
 //! ```
 

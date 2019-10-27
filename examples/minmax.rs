@@ -12,9 +12,9 @@ fn main() {
     for stones in 1..15 {
         let game = GameBuilder::new().bowls(2).stones(stones).build();
         let result = bout.start(game).expect("a finished game with score");
-        let score = result.score().map(|score|{
-            score * score_multiplier(result.current.active_player())
-        });
+        let score = result
+            .score()
+            .map(|score| score * score_multiplier(result.current.active_player()));
         println!("{} {:?}", stones, score);
     }
 }

@@ -24,7 +24,7 @@ where
 }
 
 /// Positions can have a value `v`
-/// 
+///
 /// It ranges from -∞ and ∞
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Value {
