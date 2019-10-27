@@ -1,7 +1,13 @@
 [package]
 name = "mancala"
+description = "Play a variant of mancala"
 version = "0.1.0"
 authors = ["Daan van Berkel <daan.v.berkel.1980@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/fifth-postulate/mancala"
+readme = "README.md"
+keywords = ["game", "mancala", "AI"]
+
 edition = "2018"
 
 [dependencies]
