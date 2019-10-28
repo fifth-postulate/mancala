@@ -16,6 +16,7 @@
 use super::{Depth, Heuristic, Value};
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
+use crate::strategy::tree::DepthLimitedSearch;
 use std::cmp::max;
 
 /// Build AlphaBeta strategy instances
@@ -83,11 +84,21 @@ where
     H: Heuristic + Sized,
 {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
+        let search_depth = self.search_depth;
+        self.search(position, &search_depth)
+    }
+}
+
+impl<H> DepthLimitedSearch<Position, Bowl> for AlphaBeta<H>
+where
+    H: Heuristic + Sized
+{
+    fn search(&mut self, position: &Position, search_depth: &Depth) -> Option<Bowl> {
         let (bowl, _) = alpha_beta(
             position,
             Value::NegativeInfinity,
             Value::PositiveInfinity,
-            &self.search_depth,
+            &search_depth,
             &self.heuristic,
         );
         bowl

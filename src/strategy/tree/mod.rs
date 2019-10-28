@@ -83,6 +83,7 @@ impl Ord for Value {
 }
 
 /// Determine the search depth of tree algorithms
+#[derive(Clone, Copy)]
 pub enum Depth {
     /// No limit on the search depth
     Infinite,
@@ -114,6 +115,11 @@ impl Depth {
             }
         }
     }
+}
+
+/// A search strategy that can be limited by depth
+pub trait DepthLimitedSearch<I, O> {
+    fn search(&mut self, start: &I, search_depth: &Depth) -> Option<O>;
 }
 
 #[cfg(test)]
