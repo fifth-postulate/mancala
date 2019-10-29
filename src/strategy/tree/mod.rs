@@ -2,6 +2,7 @@
 
 pub mod alphabeta;
 pub mod minmax;
+pub mod ids;
 
 pub use self::alphabeta::AlphaBeta;
 pub use self::minmax::MinMax;
