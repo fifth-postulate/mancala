@@ -9,7 +9,16 @@ use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 
 /// Pick the option that maximizes the minimum win.
-pub struct MinMax {}
+pub struct MinMax {
+    analyzer: Option<Analyzer>
+}
+
+impl MinMax {
+    /// Create a default MinMax strategy
+    pub fn new() -> Self {
+        MinMax { analyzer : None }
+    }
+}
 
 impl Strategy for MinMax {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
@@ -25,8 +34,7 @@ fn minmax(position: &Position) -> (Option<Bowl>, Value) {
             Value::Actual(position.score().expect("finished game to have a score")),
         )
     } else {
-        let mut best_bowl = None;
-        let mut best_value = Value::NegativeInfinity;
+        let (mut best_bowl, mut best_value) = (None, Value::NegativeInfinity);
         for bowl in position.options() {
             let candidate_position = position.play(bowl).expect("option to be playable");
             let (_, mut value) = minmax(&candidate_position);
@@ -40,6 +48,12 @@ fn minmax(position: &Position) -> (Option<Bowl>, Value) {
         }
         (best_bowl, best_value)
     }
+}
+
+/// Analyzes game trees
+pub struct Analyzer {
+    /// the number of nodes in the game tree
+    pub node_count: u64,
 }
 
 #[cfg(test)]
