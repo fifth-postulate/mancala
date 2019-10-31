@@ -1,8 +1,8 @@
 //! Various tree strategies for playing Mancala
 
 pub mod alphabeta;
-pub mod minmax;
 pub mod ids;
+pub mod minmax;
 
 pub use self::alphabeta::AlphaBeta;
 pub use self::minmax::MinMax;
@@ -122,13 +122,16 @@ impl Depth {
         match self {
             Depth::Infinite => Depth::Infinite,
 
-            Depth::Limit(depth) => Depth::Limit(depth + 1)
+            Depth::Limit(depth) => Depth::Limit(depth + 1),
         }
     }
 
     /// Return an interator that will visit every depth between self and limit (inclusive).
     pub fn to(&self, limit: Depth) -> DepthIterator {
-        DepthIterator { current : *self, limit }
+        DepthIterator {
+            current: *self,
+            limit,
+        }
     }
 }
 
@@ -151,8 +154,6 @@ impl Iterator for DepthIterator {
         }
     }
 }
-
-
 
 /// A search strategy that can be limited by depth
 pub trait DepthLimitedSearch<I, O> {
