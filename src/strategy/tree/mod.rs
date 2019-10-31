@@ -84,12 +84,12 @@ impl Ord for Value {
 }
 
 /// Determine the search depth of tree algorithms
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub enum Depth {
     /// No limit on the search depth
     Infinite,
     /// Limit the search depth
-    Limit(u8),
+    Limit(usize),
 }
 
 impl Depth {
@@ -98,7 +98,7 @@ impl Depth {
         match self {
             Depth::Infinite => false,
 
-            Depth::Limit(depth) => *depth == 0u8,
+            Depth::Limit(depth) => *depth == 0usize,
         }
     }
 
@@ -116,10 +116,47 @@ impl Depth {
             }
         }
     }
+
+    /// Return succeding depth.
+    pub fn increment(&self) -> Self {
+        match self {
+            Depth::Infinite => Depth::Infinite,
+
+            Depth::Limit(depth) => Depth::Limit(depth + 1)
+        }
+    }
+
+    /// Return an interator that will visit every depth between self and limit (inclusive).
+    pub fn to(&self, limit: Depth) -> DepthIterator {
+        DepthIterator { current : *self, limit }
+    }
 }
+
+/// Iterator that iterates over all Depth values
+pub struct DepthIterator {
+    current: Depth,
+    limit: Depth,
+}
+
+impl Iterator for DepthIterator {
+    type Item = Depth;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current <= self.limit {
+            let current = self.current;
+            self.current = current.increment();
+            Some(current)
+        } else {
+            None
+        }
+    }
+}
+
+
 
 /// A search strategy that can be limited by depth
 pub trait DepthLimitedSearch<I, O> {
+    /// Search up to `search_depth` levels
     fn search(&mut self, start: &I, search_depth: &Depth) -> Option<O>;
 }
 
