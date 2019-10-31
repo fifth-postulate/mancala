@@ -10,24 +10,26 @@ use crate::strategy::Strategy;
 
 /// Pick the option that maximizes the minimum win.
 pub struct MinMax {
-    analyzer: Option<Analyzer>
+    /// An Analyzer that keeps track of various statistics.
+    pub analyzer: Analyzer
 }
 
 impl MinMax {
     /// Create a default MinMax strategy
     pub fn new() -> Self {
-        MinMax { analyzer : None }
+        Self { analyzer : Analyzer::new() }
     }
 }
 
 impl Strategy for MinMax {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
-        let (bowl, _) = minmax(&position);
+        let (bowl, _) = minmax(&mut self.analyzer, &position);
         bowl
     }
 }
 
-fn minmax(position: &Position) -> (Option<Bowl>, Value) {
+fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value) {
+    analyzer.increment();
     if position.finished() {
         (
             None,
@@ -37,7 +39,7 @@ fn minmax(position: &Position) -> (Option<Bowl>, Value) {
         let (mut best_bowl, mut best_value) = (None, Value::NegativeInfinity);
         for bowl in position.options() {
             let candidate_position = position.play(bowl).expect("option to be playable");
-            let (_, mut value) = minmax(&candidate_position);
+            let (_, mut value) = minmax(analyzer, &candidate_position);
             if candidate_position.turn() != position.turn() {
                 value = value.opposite();
             }
@@ -54,6 +56,18 @@ fn minmax(position: &Position) -> (Option<Bowl>, Value) {
 pub struct Analyzer {
     /// the number of nodes in the game tree
     pub node_count: u64,
+}
+
+impl Analyzer {
+    /// Create an analyzer with the node count set to zero.i128
+    pub fn new() -> Self {
+        Self { node_count : 0 }
+    }
+
+    /// increment the node count
+    pub fn increment(&mut self) {
+        self.node_count += 1;
+    }
 }
 
 #[cfg(test)]
