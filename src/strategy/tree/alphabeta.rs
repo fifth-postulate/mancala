@@ -85,23 +85,23 @@ where
 {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let search_depth = self.search_depth;
-        self.search(position, &search_depth)
+        self.search(position, &search_depth).map(|t| t.0)
     }
 }
 
-impl<H> DepthLimitedSearch<Position, Bowl> for AlphaBeta<H>
+impl<H> DepthLimitedSearch<Position, (Bowl, Value)> for AlphaBeta<H>
 where
     H: Heuristic + Sized
 {
-    fn search(&mut self, position: &Position, search_depth: &Depth) -> Option<Bowl> {
-        let (bowl, _) = alpha_beta(
+    fn search(&mut self, position: &Position, search_depth: &Depth) -> Option<(Bowl, Value)> {
+        let (bowl, value) = alpha_beta(
             position,
             Value::NegativeInfinity,
             Value::PositiveInfinity,
             &search_depth,
             &self.heuristic,
         );
-        bowl
+        bowl.map(|b| (b, value))
     }
 }
 
