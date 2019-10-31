@@ -158,7 +158,7 @@ impl Iterator for DepthIterator {
 /// A search strategy that can be limited by depth
 pub trait DepthLimitedSearch<I, O> {
     /// Search up to `search_depth` levels
-    fn search(&mut self, start: &I, search_depth: &Depth) -> Option<O>;
+    fn search(&mut self, start: &I, search_depth: &Depth) -> O;
 }
 
 #[cfg(test)]
