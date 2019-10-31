@@ -29,7 +29,7 @@ impl Strategy for MinMax {
 }
 
 fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value) {
-    analyzer.increment();
+    analyzer.count();
     if position.finished() {
         (
             None,
@@ -39,7 +39,9 @@ fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value)
         let (mut best_bowl, mut best_value) = (None, Value::NegativeInfinity);
         for bowl in position.options() {
             let candidate_position = position.play(bowl).expect("option to be playable");
+            analyzer.increment_depth();
             let (_, mut value) = minmax(analyzer, &candidate_position);
+            analyzer.decrement_depth();
             if candidate_position.turn() != position.turn() {
                 value = value.opposite();
             }
@@ -54,19 +56,31 @@ fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value)
 
 /// Analyzes game trees
 pub struct Analyzer {
-    /// the number of nodes in the game tree
+    /// The number of nodes in the game tree
     pub node_count: u64,
+    /// The maximum_depth reached in the game tree
+    pub max_depth: u64,
+    current_depth: u64,
 }
 
 impl Analyzer {
     /// Create an analyzer with the node count set to zero.i128
     pub fn new() -> Self {
-        Self { node_count : 0 }
+        Self { node_count : 0, max_depth: 0, current_depth: 0 }
     }
 
-    /// increment the node count
-    pub fn increment(&mut self) {
+    fn count(&mut self) {
         self.node_count += 1;
+    }
+
+    fn increment_depth(&mut self) {
+        self.current_depth += 1;
+        self.max_depth = self.current_depth.max(self.max_depth);
+    }
+
+    fn decrement_depth(&mut self) {
+        self.current_depth -= 1;
+
     }
 }
 

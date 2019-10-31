@@ -8,6 +8,6 @@ fn main() {
     let mut strategy = MinMax::new();
     strategy.play(&position);
 
-    println!("Number of states in game tree {}", strategy.analyzer.node_count)
+    println!("nodes: {} depth: {}", strategy.analyzer.node_count, strategy.analyzer.max_depth)
 
 }
