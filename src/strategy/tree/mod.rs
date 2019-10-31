@@ -84,7 +84,7 @@ impl Ord for Value {
 }
 
 /// Determine the search depth of tree algorithms
-#[derive(Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub enum Depth {
     /// No limit on the search depth
     Infinite,
@@ -173,5 +173,14 @@ mod tests {
         assert!(Value::Actual(0) < Value::PositiveInfinity);
         assert!(Value::PositiveInfinity > Value::NegativeInfinity);
         assert!(Value::PositiveInfinity > Value::Actual(0));
+    }
+
+    #[test]
+    fn depth_iterator_should_contain_all_intermediate_values() {
+        let expected = vec![Depth::Limit(1), Depth::Limit(2), Depth::Limit(3)];
+
+        let actual: Vec<Depth> = Depth::Limit(1).to(Depth::Limit(3)).collect();
+
+        assert_eq!(actual, expected);
     }
 }
