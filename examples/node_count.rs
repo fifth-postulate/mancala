@@ -8,6 +8,6 @@ fn main() {
     let mut strategy = MinMax::new();
     strategy.play(&position);
 
-    println!("nodes: {} depth: {}", strategy.analyzer.node_count, strategy.analyzer.max_depth)
+    println!("{}", strategy.analyzer)
 
 }

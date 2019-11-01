@@ -7,6 +7,7 @@
 use super::Value;
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
+use std::fmt::{self, Display, Formatter};
 
 /// Pick the option that maximizes the minimum win.
 pub struct MinMax {
@@ -84,6 +85,12 @@ impl Analyzer {
     }
 }
 
+impl Display for Analyzer {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
+        write!(formatter, "nodes: {} depth: {}", self.node_count, self.max_depth)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,8 +99,9 @@ mod tests {
     #[test]
     fn finished_games_are_scored() {
         let position = Position::from((5, 0, [0, 0, 2, 2]));
+        let mut analyzer = Analyzer::new();
 
-        let (bowl, value) = minmax(&position);
+        let (bowl, value) = minmax(&mut analyzer, &position);
 
         assert_eq!(value, Value::Actual(1));
         assert_eq!(bowl, None);
@@ -102,8 +110,9 @@ mod tests {
     #[test]
     fn only_bowl_is_selected() {
         let position = Position::from([1, 0, 1, 0]);
+        let mut analyzer = Analyzer::new();
 
-        let result = minmax(&position);
+        let result = minmax(&mut analyzer, &position);
 
         assert_eq!(result, (Some(0), Value::Actual(2)));
     }
@@ -111,8 +120,9 @@ mod tests {
     #[test]
     fn best_bowl_is_selected() {
         let position = Position::from([1, 2, 1, 0, 2, 1]);
+        let mut analyzer = Analyzer::new();
 
-        let (_, value) = minmax(&position);
+        let (_, value) = minmax(&mut analyzer, &position);
 
         assert_eq!(value, Value::Actual(5));
     }
