@@ -57,10 +57,8 @@ fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value)
 
 /// Analyzes game trees
 pub struct Analyzer {
-    /// The number of nodes in the game tree
-    pub node_count: u64,
-    /// The maximum_depth reached in the game tree
-    pub max_depth: u64,
+    node_count: u64,
+    max_depth: u64,
     current_depth: u64,
 }
 
@@ -81,7 +79,6 @@ impl Analyzer {
 
     fn decrement_depth(&mut self) {
         self.current_depth -= 1;
-
     }
 }
 
