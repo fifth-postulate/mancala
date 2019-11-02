@@ -8,6 +8,7 @@ use super::Value;
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 use std::fmt::{self, Display, Formatter};
+use std::collections::HashMap;
 
 /// Pick the option that maximizes the minimum win.
 pub struct MinMax {
@@ -57,24 +58,27 @@ fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value)
 
 /// Analyzes game trees
 pub struct Analyzer {
-    node_count: u64,
-    max_depth: u64,
+    depth_counter : HashMap<u64, u64>,
     current_depth: u64,
 }
 
 impl Analyzer {
     /// Create an analyzer with the node count set to zero.i128
     pub fn new() -> Self {
-        Self { node_count : 0, max_depth: 0, current_depth: 0 }
+        Self { depth_counter: HashMap::new(), current_depth: 0 }
     }
 
     fn count(&mut self) {
-        self.node_count += 1;
+        let count = if self.depth_counter.contains_key(&self.current_depth) {
+            self.depth_counter.get(&self.current_depth).unwrap()
+        } else {
+            &0u64
+        };
+        self.depth_counter.insert(self.current_depth, count+1);
     }
 
     fn increment_depth(&mut self) {
         self.current_depth += 1;
-        self.max_depth = self.current_depth.max(self.max_depth);
     }
 
     fn decrement_depth(&mut self) {
@@ -84,7 +88,9 @@ impl Analyzer {
 
 impl Display for Analyzer {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
-        write!(formatter, "nodes: {} depth: {}", self.node_count, self.max_depth)
+        let max_depth = self.depth_counter.keys().max().unwrap();
+        let node_count: u64 = self.depth_counter.values().sum();
+        write!(formatter, "nodes: {} depth: {}", node_count, max_depth)
     }
 }
 
