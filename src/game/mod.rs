@@ -189,37 +189,33 @@ impl Position {
     fn sow(&self, bowl: Bowl) -> Self {
         let mut player = self.player;
         let mut bowls = self.bowls.clone();
-        let mut stones = bowls[bowl];
-        let mut index = bowl;
-        let mut store_offset = 0;
-        let mut stored = 0;
-        let mut change_player = true;
-        bowls[index] = 0;
-        while stones > 0 {
-            index += 1;
-            if index - store_offset == 2 * self.size {
-                index = 0;
-                store_offset = 0;
-            }
-            if index == self.size {
-                stored += 1;
-                store_offset = 1;
-            } else {
-                bowls[index - store_offset] += 1;
-            }
-            if stones == 1 && index == self.size {
-                change_player = false
-            }
-            if stones == 1 && store_offset == 0 && bowls[index] == 1 {
-                let capture_index = 2 * self.size - 1 - index;
-                stored += bowls[capture_index];
-                bowls[capture_index] = 0;
-            }
-            stones -= 1;
+        let stones = bowls[bowl];
+        bowls[bowl] = 0;
+        let tour = 2 * self.size + 1;
+        let all_gain = stones as usize / tour;
+        bowls = bowls
+            .iter()
+            .map(|s| (*s as usize + all_gain) as Stones)
+            .collect();
+        let extra = stones as usize % tour;
+        let final_index = bowl + extra;
+        (1..=(if final_index >= self.size {
+            extra - 1
+        } else {
+            extra
+        }))
+            .for_each(|i| bowls[(bowl + i) % (2 * self.size)] += 1);
+        let mut captured = 0;
+        if final_index < self.size && bowls[final_index] == 1 {
+            let index = 2 * self.size - 1 - final_index;
+            captured = bowls[index] as usize;
+            bowls[index] = 0;
         }
-        let mut capture = [self.capture[0] + stored as Stones, self.capture[1]];
+        let capture_gain = all_gain + captured + if final_index >= self.size { 1 } else { 0 };
+        let mut capture = [self.capture[0] + capture_gain as Stones, self.capture[1]];
+        let change_player = final_index != self.size;
         if change_player {
-            player = player.other();
+            player = self.player.other();
             capture = [capture[1], capture[0]];
             bowls.rotate_left(self.size);
         }

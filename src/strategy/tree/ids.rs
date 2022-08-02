@@ -4,7 +4,7 @@
 //!
 //! >  is a state space/graph search strategy in which a depth-limited version of depth-first search is run repeatedly with increasing depth limits until the goal is found.
 
-use super::{Depth, Value, DepthLimitedSearch};
+use super::{Depth, DepthLimitedSearch, Value};
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
 
@@ -23,12 +23,12 @@ where
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let (mut best_bowl, mut best_value) = (None, Value::NegativeInfinity);
         for current_depth in Depth::Limit(1).to(self.max_depth) {
-            let (candidate_bowl, candidate_value) = self.searcher.search(&position, &current_depth); 
+            let (candidate_bowl, candidate_value) = self.searcher.search(position, &current_depth);
             if candidate_value > best_value {
                 best_bowl = candidate_bowl;
                 best_value = candidate_value;
             }
-       }
-       best_bowl
+        }
+        best_bowl
     }
 }

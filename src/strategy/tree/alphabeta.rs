@@ -85,7 +85,7 @@ where
 {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let search_depth = self.search_depth;
-        let (bowl, _ ) = self.search(position, &search_depth);
+        let (bowl, _) = self.search(position, &search_depth);
         bowl
     }
 }
@@ -99,7 +99,7 @@ where
             position,
             Value::NegativeInfinity,
             Value::PositiveInfinity,
-            &search_depth,
+            search_depth,
             &self.heuristic,
         )
     }
@@ -127,8 +127,7 @@ fn alpha_beta(
         let mut best_value = Value::NegativeInfinity;
         for bowl in position.options() {
             let candidate_position = position.play(bowl).expect("option to be playable");
-            let value;
-            if candidate_position.turn() == position.turn() {
+            let value = if candidate_position.turn() == position.turn() {
                 let tuple = alpha_beta(
                     &candidate_position,
                     alpha,
@@ -136,7 +135,7 @@ fn alpha_beta(
                     &search_depth.decrement(),
                     heuristic,
                 );
-                value = tuple.1;
+                tuple.1
             } else {
                 let tuple = alpha_beta(
                     &candidate_position,
@@ -145,8 +144,8 @@ fn alpha_beta(
                     &search_depth.decrement(),
                     heuristic,
                 );
-                value = tuple.1.opposite()
-            }
+                tuple.1.opposite()
+            };
             if value > best_value {
                 best_bowl = Some(bowl);
                 best_value = value;

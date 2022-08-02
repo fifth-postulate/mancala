@@ -1,7 +1,7 @@
 extern crate mancala;
 
-use mancala::strategy::{MinMax, Strategy};
 use mancala::game::Position;
+use mancala::strategy::{MinMax, Strategy};
 
 fn main() {
     for bowls in 1..4 {

@@ -7,25 +7,33 @@
 use super::Value;
 use crate::game::{Bowl, Position};
 use crate::strategy::Strategy;
-use std::fmt::{self, Display, Formatter};
 use std::collections::HashMap;
+use std::fmt::{self, Display, Formatter};
 
 /// Pick the option that maximizes the minimum win.
 pub struct MinMax {
     /// An Analyzer that keeps track of various statistics.
-    pub analyzer: Analyzer
+    pub analyzer: Analyzer,
 }
 
 impl MinMax {
     /// Create a default MinMax strategy
     pub fn new() -> Self {
-        Self { analyzer : Analyzer::new() }
+        Self {
+            analyzer: Analyzer::new(),
+        }
+    }
+}
+
+impl Default for MinMax {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
 impl Strategy for MinMax {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
-        let (bowl, _) = minmax(&mut self.analyzer, &position);
+        let (bowl, _) = minmax(&mut self.analyzer, position);
         bowl
     }
 }
@@ -58,14 +66,17 @@ fn minmax(analyzer: &mut Analyzer, position: &Position) -> (Option<Bowl>, Value)
 
 /// Analyzes game trees
 pub struct Analyzer {
-    depth_counter : HashMap<u64, u64>,
+    depth_counter: HashMap<u64, u64>,
     current_depth: u64,
 }
 
 impl Analyzer {
     /// Create an analyzer with the node count set to zero.i128
     pub fn new() -> Self {
-        Self { depth_counter: HashMap::new(), current_depth: 0 }
+        Self {
+            depth_counter: HashMap::new(),
+            current_depth: 0,
+        }
     }
 
     fn count(&mut self) {
@@ -74,7 +85,7 @@ impl Analyzer {
         } else {
             &0u64
         };
-        self.depth_counter.insert(self.current_depth, count+1);
+        self.depth_counter.insert(self.current_depth, count + 1);
     }
 
     fn increment_depth(&mut self) {
@@ -83,6 +94,12 @@ impl Analyzer {
 
     fn decrement_depth(&mut self) {
         self.current_depth -= 1;
+    }
+}
+
+impl Default for Analyzer {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
