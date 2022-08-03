@@ -227,13 +227,12 @@ impl Position {
         }
     }
 
-    /// Determine if a position is finished
+    /// Determine if a position is finished.
+    /// 
+    /// A position is finished when the current play can't make any plays
     pub fn finished(&self) -> bool {
         self.bowls[0..self.size].iter().all(|&stones| stones == 0)
-            || self.bowls[self.size..(2 * self.size)]
-                .iter()
-                .all(|&stones| stones == 0)
-    }
+   }
 
     /// Which player is allowed to make a play
     pub fn active_player(&self) -> Player {
