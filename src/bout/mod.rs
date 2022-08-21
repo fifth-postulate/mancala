@@ -42,7 +42,6 @@ impl<'a> Bout<'a> {
                 Some(bowl) => game
                     .play(bowl)
                     .map_err(|foul_play| Problem::IllegalPlay(game.turn(), foul_play)),
-
                 None => Err(Problem::NoPlay(game.turn())),
             };
             if result.is_err() {
