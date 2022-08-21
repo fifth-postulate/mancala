@@ -2,7 +2,7 @@
 use super::super::Strategy;
 use crate::game::{Bowl, Position};
 
-///  Pick the first option.
+/// Pick the first option.
 pub struct First {}
 
 impl Strategy for First {

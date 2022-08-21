@@ -5,6 +5,7 @@ pub mod tree;
 pub mod user;
 
 pub use self::naive::First;
+pub use self::naive::Random;
 pub use self::tree::AlphaBeta;
 pub use self::tree::MinMax;
 pub use self::user::user;
