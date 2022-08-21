@@ -1,14 +1,5 @@
 //! Naive strategies, mainly for testing purposes.
+mod first;
 
-use super::Strategy;
-use crate::game::{Bowl, Position};
+pub use first::First;
 
-/// Pick the first option.
-pub struct First {}
-
-impl Strategy for First {
-    fn play(&mut self, position: &Position) -> Option<Bowl> {
-        let options = position.options();
-        options.first().cloned()
-    }
-}
