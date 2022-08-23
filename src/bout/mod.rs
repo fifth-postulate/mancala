@@ -1,12 +1,26 @@
 //! Coordination of a bout between strategies.
 
-use super::game::{FoulPlay, Game, Player};
+use super::game::{FoulPlay, Game, Player, Bowl};
 use super::strategy::Strategy;
 
 /// Representation of the bout
 pub struct Bout<'a> {
+    displayer: &'a dyn DisplayPlay,
     red_strategy: &'a mut dyn Strategy,
     blue_strategy: &'a mut dyn Strategy,
+}
+
+/// Trait to display the play made by a strategy.
+pub trait DisplayPlay {
+    /// Receive the bowl played so that it can be displayed.
+    fn display(&self, bowl_played: Bowl);
+}
+
+impl<F> DisplayPlay for F
+where F: Fn(Bowl) + Sized {
+    fn display(&self, bowl_played: Bowl) {
+        self(bowl_played)
+    }
 }
 
 /// Problems that can occur during a bout
@@ -22,8 +36,9 @@ pub enum Problem {
 
 impl<'a> Bout<'a> {
     /// Create a bout between strategies.
-    pub fn new(red_strategy: &'a mut dyn Strategy, blue_strategy: &'a mut dyn Strategy) -> Self {
+    pub fn new(red_strategy: &'a mut dyn Strategy, blue_strategy: &'a mut dyn Strategy, displayer: &'a dyn DisplayPlay) -> Self {
         Bout {
+            displayer,
             red_strategy,
             blue_strategy,
         }
@@ -39,9 +54,12 @@ impl<'a> Bout<'a> {
                 Player::Blue => self.blue_strategy.play(&game.current),
             };
             result = match bowl_option {
-                Some(bowl) => game
+                Some(bowl) => {
+                    self.displayer.display(bowl);
+                    game
                     .play(bowl)
-                    .map_err(|foul_play| Problem::IllegalPlay(game.turn(), foul_play)),
+                    .map_err(|foul_play| Problem::IllegalPlay(game.turn(), foul_play))
+                },
                 None => Err(Problem::NoPlay(game.turn())),
             };
             if result.is_err() {

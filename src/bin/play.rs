@@ -3,7 +3,7 @@ extern crate mancala;
 
 use clap::{App, Arg};
 use mancala::bout::Bout;
-use mancala::game::{GameBuilder, Player};
+use mancala::game::{GameBuilder, Player, Bowl};
 use mancala::strategy::tree::Depth;
 use mancala::strategy::{user, AlphaBeta};
 use std::ops::Neg;
@@ -47,7 +47,7 @@ fn main() {
     let mut blue_strategy = AlphaBeta::strategy()
         .limited_to(Depth::Limit(depth))
         .build();
-    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
+    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy, &(|bowl: Bowl| {println!("played {}", bowl)}));
 
     let bowls = matches.value_of("bowls").unwrap().parse().unwrap_or(6);
     let stones = matches.value_of("stones").unwrap().parse().unwrap_or(4);

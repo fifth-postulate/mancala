@@ -12,7 +12,7 @@ const MAXIMUM_ALLOWED_DURATION: Duration = Duration::from_millis(1000);
 fn calculating_end_games_should_be_quick() {
     let mut red_strategy = AlphaBeta::strategy().build();
     let mut blue_strategy = AlphaBeta::strategy().build();
-    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
+    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy, &|_|{});
 
     let start_time = SystemTime::now();
     for stones in 1..15 {

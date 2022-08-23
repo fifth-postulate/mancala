@@ -1,13 +1,13 @@
 extern crate mancala;
 
 use mancala::bout::Bout;
-use mancala::game::{GameBuilder, Player};
+use mancala::game::{GameBuilder, Player, Bowl};
 use mancala::strategy::MinMax;
 
 fn main() {
     let mut red_strategy = MinMax::new();
     let mut blue_strategy = MinMax::new();
-    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy);
+    let mut bout = Bout::new(&mut red_strategy, &mut blue_strategy, &|_| {});
 
     for stones in 1..15 {
         let game = GameBuilder::new().bowls(2).stones(stones).build();
