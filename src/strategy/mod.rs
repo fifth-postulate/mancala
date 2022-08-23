@@ -17,3 +17,9 @@ pub trait Strategy {
     /// Return the play for this position
     fn play(&mut self, position: &Position) -> Option<Bowl>;
 }
+
+impl Strategy for Box<dyn Strategy> {
+    fn play(&mut self, position: &Position) -> Option<Bowl> {
+       (**self).play(position) 
+    }
+}

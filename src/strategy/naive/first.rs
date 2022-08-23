@@ -5,6 +5,13 @@ use crate::game::{Bowl, Position};
 /// Pick the first option.
 pub struct First {}
 
+impl First {
+    /// Create a first strategy
+    pub fn new() -> Self{
+        Self {}
+    }
+}
+
 impl Strategy for First {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let options = position.options();
