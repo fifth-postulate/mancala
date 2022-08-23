@@ -1,7 +1,7 @@
 extern crate mancala;
 
 use mancala::bout::Bout;
-use mancala::game::{GameBuilder, Player, Bowl};
+use mancala::game::{Bowl, GameBuilder, Player};
 use mancala::strategy::MinMax;
 
 fn main() {

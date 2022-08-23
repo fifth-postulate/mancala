@@ -1,6 +1,6 @@
 //! Coordination of a bout between strategies.
 
-use super::game::{FoulPlay, Game, Player, Bowl};
+use super::game::{Bowl, FoulPlay, Game, Player};
 use super::strategy::Strategy;
 
 /// Representation of the bout
@@ -17,7 +17,9 @@ pub trait DisplayPlay {
 }
 
 impl<F> DisplayPlay for F
-where F: Fn(Bowl) + Sized {
+where
+    F: Fn(Bowl) + Sized,
+{
     fn display(&self, bowl_played: Bowl) {
         self(bowl_played)
     }
@@ -36,7 +38,11 @@ pub enum Problem {
 
 impl<'a> Bout<'a> {
     /// Create a bout between strategies.
-    pub fn new(red_strategy: &'a mut dyn Strategy, blue_strategy: &'a mut dyn Strategy, displayer: &'a dyn DisplayPlay) -> Self {
+    pub fn new(
+        red_strategy: &'a mut dyn Strategy,
+        blue_strategy: &'a mut dyn Strategy,
+        displayer: &'a dyn DisplayPlay,
+    ) -> Self {
         Bout {
             displayer,
             red_strategy,
@@ -56,10 +62,9 @@ impl<'a> Bout<'a> {
             result = match bowl_option {
                 Some(bowl) => {
                     self.displayer.display(bowl);
-                    game
-                    .play(bowl)
-                    .map_err(|foul_play| Problem::IllegalPlay(game.turn(), foul_play))
-                },
+                    game.play(bowl)
+                        .map_err(|foul_play| Problem::IllegalPlay(game.turn(), foul_play))
+                }
                 None => Err(Problem::NoPlay(game.turn())),
             };
             if result.is_err() {
