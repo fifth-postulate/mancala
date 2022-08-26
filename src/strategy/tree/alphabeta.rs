@@ -8,15 +8,19 @@
 //!
 //! ```
 //! use mancala::strategy::tree::{AlphaBeta, Depth};
-//! use mancala::strategy::tree::alphabeta::delta;
+//! use mancala::strategy::heuristic::delta;
 //!
 //! let strategy = AlphaBeta::strategy().limited_to(Depth::Limit(5)).with_heuristic(delta()).build();
 //! ```
 
-use super::{Depth, Heuristic, Value};
-use crate::game::{Bowl, Position};
-use crate::strategy::tree::DepthLimitedSearch;
-use crate::strategy::Strategy;
+use super::{Depth, DepthLimitedSearch};
+use crate::{
+    game::{Bowl, Position},
+    strategy::{
+        heuristic::{delta, Delta, Heuristic, Value},
+        Strategy,
+    },
+};
 use std::cmp::max;
 
 /// Build AlphaBeta strategy instances
@@ -156,20 +160,6 @@ fn alpha_beta(
             }
         }
         (best_bowl, best_value)
-    }
-}
-
-/// A simple heuristic that looks at the difference between the captured stones.
-pub struct Delta {}
-
-/// create a delta heuristic
-pub fn delta() -> Delta {
-    Delta {}
-}
-
-impl Heuristic for Delta {
-    fn evaluate(&self, position: &Position) -> Value {
-        Value::Actual(position.delta())
     }
 }
 

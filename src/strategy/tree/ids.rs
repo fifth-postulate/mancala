@@ -4,9 +4,11 @@
 //!
 //! >  is a state space/graph search strategy in which a depth-limited version of depth-first search is run repeatedly with increasing depth limits until the goal is found.
 
-use super::{Depth, DepthLimitedSearch, Value};
-use crate::game::{Bowl, Position};
-use crate::strategy::Strategy;
+use super::{Depth, DepthLimitedSearch};
+use crate::{
+    game::{Bowl, Position},
+    strategy::{heuristic::Value, Strategy},
+};
 
 struct IterativeDeepeningSearch<S>
 where

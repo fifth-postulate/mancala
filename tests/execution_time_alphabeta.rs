@@ -6,7 +6,7 @@ use mancala::bout::Bout;
 use mancala::game::GameBuilder;
 use mancala::strategy::AlphaBeta;
 
-const MAXIMUM_ALLOWED_DURATION: Duration = Duration::from_millis(1000);
+const MAXIMUM_ALLOWED_DURATION: Duration = Duration::from_millis(2000);
 
 #[test]
 fn calculating_end_games_should_be_quick() {

@@ -8,15 +8,16 @@
 //!
 //! ```
 //! use mancala::strategy::tree::{MonteCarlo, Depth};
-//! use mancala::strategy::tree::alphabeta::delta;
+//! use mancala::strategy::heuristic::delta;
 //!
 //! let strategy = MonteCarlo::strategy().limited_to(Depth::Limit(5)).with_heuristic(delta()).build();
 //! ```
 
-use super::{Depth, Heuristic, Value};
-use crate::game::{Bowl, Position};
-use crate::strategy::tree::DepthLimitedSearch;
-use crate::strategy::Strategy;
+use super::{Depth, DepthLimitedSearch};
+use crate::{
+    game::{Bowl, Position},
+    strategy::{heuristic::Heuristic, Strategy, Value},
+};
 use std::cmp::max;
 
 /// Build MonteCarlo strategy instances

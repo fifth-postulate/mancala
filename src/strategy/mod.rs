@@ -1,15 +1,16 @@
 //! Various strategies for playing Mancala
 
+pub mod heuristic;
 pub mod naive;
 pub mod tree;
 pub mod user;
 
-pub use self::naive::First;
-pub use self::naive::Random;
-pub use self::tree::AlphaBeta;
-pub use self::tree::MinMax;
-pub use self::user::user;
-
+pub use self::{
+    heuristic::{Heuristic, Value},
+    naive::{First, Random},
+    tree::{AlphaBeta, MinMax, MonteCarlo},
+    user::user,
+};
 use super::game::{Bowl, Position};
 
 /// A strategy for playing Mancala
