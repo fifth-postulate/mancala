@@ -20,6 +20,6 @@ pub trait Strategy {
 
 impl Strategy for Box<dyn Strategy> {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
-       (**self).play(position) 
+        (**self).play(position)
     }
 }

@@ -7,7 +7,7 @@ pub struct First {}
 
 impl First {
     /// Create a first strategy
-    pub fn new() -> Self{
+    pub fn new() -> Self {
         Self {}
     }
 }

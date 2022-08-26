@@ -2,9 +2,11 @@
 
 pub mod alphabeta;
 pub mod ids;
+pub mod mcts;
 pub mod minmax;
 
 pub use self::alphabeta::AlphaBeta;
+pub use self::mcts::MonteCarlo;
 pub use self::minmax::MinMax;
 use crate::game::{Position, Score};
 use std::cmp::{Ord, Ordering, PartialOrd};

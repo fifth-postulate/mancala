@@ -60,8 +60,10 @@ fn main() {
         .get_matches();
 
     let depth = Depth::Limit(matches.value_of("depth").unwrap().parse().unwrap_or(5));
-    let mut red_strategy = strategy_from_name(matches.value_of("red").unwrap_or("alphabeta"), depth);
-    let mut blue_strategy = strategy_from_name(matches.value_of("blue").unwrap_or("alphabeta"), depth);   
+    let mut red_strategy =
+        strategy_from_name(matches.value_of("red").unwrap_or("alphabeta"), depth);
+    let mut blue_strategy =
+        strategy_from_name(matches.value_of("blue").unwrap_or("alphabeta"), depth);
     let mut bout = Bout::new(
         &mut red_strategy,
         &mut blue_strategy,
