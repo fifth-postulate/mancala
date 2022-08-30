@@ -16,7 +16,10 @@
 use super::{Depth, DepthLimitedSearch};
 use crate::{
     game::{Bowl, Position},
-    strategy::{heuristic::Heuristic, Strategy, Value},
+    strategy::{
+        heuristic::{delta, Delta, Heuristic},
+        Strategy, Value,
+    },
 };
 use std::cmp::max;
 
@@ -160,29 +163,15 @@ fn alpha_beta(
     }
 }
 
-/// A simple heuristic that looks at the difference between the captured stones.
-pub struct Delta {}
-
-/// create a delta heuristic
-pub fn delta() -> Delta {
-    Delta {}
-}
-
-impl Heuristic for Delta {
-    fn evaluate(&self, position: &Position) -> Value {
-        Value::Actual(position.delta())
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::game::Position;
+    use crate::{game::Position, strategy::heuristic::delta};
 
     #[test]
     fn finished_games_are_scored() {
         let position = Position::from((5, 0, [0, 0, 2, 2]));
-        let heuristic = Delta {};
+        let heuristic = delta();
 
         let (bowl, value) = alpha_beta(
             &position,
@@ -199,7 +188,7 @@ mod tests {
     #[test]
     fn only_bowl_is_selected() {
         let position = Position::from([1, 0, 1, 0]);
-        let heuristic = Delta {};
+        let heuristic = delta();
 
         let result = alpha_beta(
             &position,
@@ -215,7 +204,7 @@ mod tests {
     #[test]
     fn best_bowl_is_selected() {
         let position = Position::from([1, 2, 1, 0, 2, 1]);
-        let heuristic = Delta {};
+        let heuristic = delta();
 
         let (_, value) = alpha_beta(
             &position,

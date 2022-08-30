@@ -12,6 +12,12 @@ impl First {
     }
 }
 
+impl Default for First {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Strategy for First {
     fn play(&mut self, position: &Position) -> Option<Bowl> {
         let options = position.options();
