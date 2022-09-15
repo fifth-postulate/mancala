@@ -40,6 +40,15 @@ fn main() {
                 .default_value("5")
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("first")
+                .short("f")
+                .long("first")
+                .value_name("BOOLEAN")
+                .help("Determines if you want to go first")
+                .default_value("true")
+                .takes_value(true),
+        )
         .get_matches();
 
     let mut red_strategy = user();
@@ -47,11 +56,20 @@ fn main() {
     let mut blue_strategy = AlphaBeta::strategy()
         .limited_to(Depth::Limit(depth))
         .build();
-    let mut bout = Bout::new(
-        &mut red_strategy,
-        &mut blue_strategy,
-        &(|bowl: Bowl| println!("played {}", bowl)),
-    );
+    let go_first = matches.value_of("first").unwrap().parse().unwrap_or(true);
+    let mut bout = if go_first {
+        Bout::new(
+            &mut red_strategy,
+            &mut blue_strategy,
+            &(|bowl: Bowl| println!("played {}", bowl)),
+        )
+    } else {
+        Bout::new(
+            &mut blue_strategy,
+            &mut red_strategy,
+            &(|bowl: Bowl| println!("played {}", bowl)),
+        )
+    };
 
     let bowls = matches.value_of("bowls").unwrap().parse().unwrap_or(6);
     let stones = matches.value_of("stones").unwrap().parse().unwrap_or(4);
